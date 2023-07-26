@@ -273,7 +273,7 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 	broker.Logger.Info(route.URL)
 
 	sucessfulStart, err := broker.MonitorApplicationStartup(cfClient, community, broker.Logger, app.GUID)
-	if err != nil || sucessfulStart == false {
+	if err != nil || !sucessfulStart {
 		broker.Logger.Info("Crashed application retarting...")
 		app, _, err = cfClient.UpdateApplicationStart(app.GUID)
 		if err != nil {
