@@ -22,9 +22,7 @@ func getProcessStatsByAppAndType(cfClient *ccv3.Client, community *cf.Client, lo
 			continue
 		}
 
-		for _, stat := range candidates {
-			stats = append(stats, stat)
-		}
+		stats = append(stats, candidates...)
 	}
 
 	if len(stats) == 0 {
