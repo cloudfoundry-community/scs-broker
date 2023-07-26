@@ -25,7 +25,7 @@ func (broker *SCSBroker) GetServiceByServiceID(serviceID string) (config.Service
 		}
 	}
 
-	return config.Service{}, fmt.Errorf("No valid service found for %s", serviceID)
+	return config.Service{}, fmt.Errorf("no valid service found for %s", serviceID)
 }
 
 func (broker *SCSBroker) Services(ctx context.Context) ([]brokerapi.Service, error) {

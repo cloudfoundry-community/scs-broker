@@ -8,7 +8,7 @@ import (
 )
 
 func (broker *SCSBroker) Provision(ctx context.Context, instanceID string, details brokerapi.ProvisionDetails, asyncAllowed bool) (spec brokerapi.ProvisionedServiceSpec, err error) {
-	broker.Logger.Info(fmt.Sprintf("Got these details: %s", details))
+	broker.Logger.Info(fmt.Sprintf("Got these details: %+v", details))
 	spec = brokerapi.ProvisionedServiceSpec{}
 
 	broker.Logger.Info("Provisioning a " + details.ServiceID + " service instance")

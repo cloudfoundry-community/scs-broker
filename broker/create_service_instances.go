@@ -9,7 +9,7 @@ import (
 )
 
 func (broker *SCSBroker) CreateServiceInstances(ctx context.Context, instanceID string, details brokerapi.ProvisionDetails, asyncAllowed bool) error {
-	broker.Logger.Info(fmt.Sprintf("Starting thread for creating service application these details: %s", details))
+	broker.Logger.Info(fmt.Sprintf("Starting thread for creating service application these details: %+v", details))
 
 	go broker.startInstances(instanceID, details)
 
