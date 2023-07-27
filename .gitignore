@@ -16,3 +16,7 @@
 # vendor/
 secrets.yml
 main
+
+# Ignore built artifacts
+scs-broker
+builds/
