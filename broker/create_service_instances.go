@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	brokerapi "github.com/pivotal-cf/brokerapi/domain"
-	scsccparser "github.com/starkandwayne/spring-cloud-services-cli-config-parser"
+	scsccparser "github.com/cloudfoundry-community/spring-cloud-services-cli-config-parser"
 )
 
 func (broker *SCSBroker) CreateServiceInstances(ctx context.Context, instanceID string, details brokerapi.ProvisionDetails, asyncAllowed bool) error {

@@ -78,6 +78,9 @@ github.com/cloudfoundry-community/go-cfclient
 ## explicit; go 1.12
 github.com/cloudfoundry-community/go-uaa
 github.com/cloudfoundry-community/go-uaa/passwordcredentials
+# github.com/cloudfoundry-community/spring-cloud-services-cli-config-parser v1.0.3
+## explicit; go 1.20
+github.com/cloudfoundry-community/spring-cloud-services-cli-config-parser
 # github.com/cloudfoundry/bosh-cli v6.2.1+incompatible
 ## explicit
 github.com/cloudfoundry/bosh-cli/director/template
@@ -149,9 +152,6 @@ github.com/pkg/errors
 # github.com/sirupsen/logrus v1.6.0
 ## explicit; go 1.13
 github.com/sirupsen/logrus
-# github.com/starkandwayne/spring-cloud-services-cli-config-parser v1.0.2
-## explicit; go 1.18
-github.com/starkandwayne/spring-cloud-services-cli-config-parser
 # github.com/stretchr/testify v1.7.0
 ## explicit; go 1.13
 # github.com/tedsuo/rata v1.0.0

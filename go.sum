@@ -40,6 +40,8 @@ github.com/cloudfoundry-community/go-cfclient v0.0.0-20220930021109-9c4e6c59ccf1
 github.com/cloudfoundry-community/go-cfclient v0.0.0-20220930021109-9c4e6c59ccf1/go.mod h1:sgaEj3tRn0hwe7GPdEUwxrdOqjBzyjyvyOCGf1OQyZY=
 github.com/cloudfoundry-community/go-uaa v0.3.1 h1:qmiTqE8Be3zJoL2wcwddVnbRNMDhOrURZbWOUQ2ibJQ=
 github.com/cloudfoundry-community/go-uaa v0.3.1/go.mod h1:m3JOryy7cx+7QLxuwB+bXuAx5AUJ3W9XhRUBu6Eih0Q=
+github.com/cloudfoundry-community/spring-cloud-services-cli-config-parser v1.0.3 h1:EBZbg3fC8Xtk/OrJ67M8Q28qGG+CrH3TR96qhFZhY58=
+github.com/cloudfoundry-community/spring-cloud-services-cli-config-parser v1.0.3/go.mod h1:EHJdPdTQpnnj2/uoguEjFJS2Tovak2GfCLLBSiU4hd4=
 github.com/cloudfoundry/bosh-cli v6.2.1+incompatible h1:pkQSRxwpiVhyDmq+zA4fUW6BK65gKoS+aLNTpuxoxnw=
 github.com/cloudfoundry/bosh-cli v6.2.1+incompatible/go.mod h1:rzIB+e1sn7wQL/TJ54bl/FemPKRhXby5BIMS3tLuWFM=
 github.com/cloudfoundry/bosh-utils v0.0.0-20200606100138-7f673ba6be2a h1:U+r26SNMeJgeG5jLoMBlMJ5+ib+pTH7CHs/M4IT6umM=
@@ -179,8 +181,6 @@ github.com/smartystreets/goconvey v0.0.0-20190330032615-68dc04aab96a h1:pa8hGb/2
 github.com/smartystreets/goconvey v0.0.0-20190330032615-68dc04aab96a/go.mod h1:syvi0/a8iFYH4r/RixwvyeAJjdLS9QV7WQ/tjFTllLA=
 github.com/square/certstrap v1.2.0 h1:ecgyABrbFLr8jSbOC6oTBmBek0t/HqtgrMUZCPuyfdw=
 github.com/square/certstrap v1.2.0/go.mod h1:CUHqV+fxJW0Y5UQFnnbYwQ7bpKXO1AKbic9g73799yw=
-github.com/starkandwayne/spring-cloud-services-cli-config-parser v1.0.2 h1:3r4jVyuR9ycvepUtwb79o7iq/KRbHn4wEln/00h5Mpg=
-github.com/starkandwayne/spring-cloud-services-cli-config-parser v1.0.2/go.mod h1:aYtcQDcJ8hU146DZxU4vizwrQT75Qa2FakYI1vXV3Ww=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
 github.com/stretchr/testify v1.7.0 h1:nwc3DEeHmmLAfoZucVR881uASk0Mfjw8xYJ99tb5CcY=

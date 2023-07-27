@@ -9,7 +9,7 @@ import (
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3"
 	"code.cloudfoundry.org/cli/types"
 
-	"github.com/starkandwayne/scs-broker/broker/utilities"
+	"github.com/cloudfoundry-community/scs-broker/broker/utilities"
 )
 
 func (broker *SCSBroker) UpdateRegistryEnvironment(cfClient *ccv3.Client, app *ccv3.Application, info *ccv3.Info, kind string, instanceId string, rc *utilities.RegistryConfig, params map[string]string) error {

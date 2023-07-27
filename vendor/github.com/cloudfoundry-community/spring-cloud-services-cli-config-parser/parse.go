@@ -62,9 +62,10 @@ func buildKey(root bool, base string, keyint map[string]interface{}) (map[string
 
 	for key, value := range keys {
 
-		if root == false {
+		if !root {
 			sb.WriteString(base + key)
 		} else {
+			sb.Reset()
 			sb.WriteString(baseConfig + key)
 		}
 
@@ -85,7 +86,7 @@ func buildKey(root bool, base string, keyint map[string]interface{}) (map[string
 			envmap[strings.ToUpper(sb.String())] = s
 			sb.Reset()
 		case float64:
-			s := fmt.Sprintf("%f", value.(float64))
+			s := fmt.Sprintf("%g", value.(float64))
 			envmap[strings.ToUpper(sb.String())] = s
 			sb.Reset()
 		case string:

@@ -6,7 +6,7 @@ import (
 
 	"code.cloudfoundry.org/lager"
 	brokerapi "github.com/pivotal-cf/brokerapi/domain"
-	"github.com/starkandwayne/scs-broker/config"
+	"github.com/cloudfoundry-community/scs-broker/config"
 )
 
 const (

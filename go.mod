@@ -1,4 +1,4 @@
-module github.com/starkandwayne/scs-broker
+module github.com/cloudfoundry-community/scs-broker
 
 go 1.20
 
@@ -18,8 +18,8 @@ require (
 	github.com/cloudfoundry-community/go-cf-clients-helper v1.0.1
 	github.com/cloudfoundry-community/go-cfclient v0.0.0-20220930021109-9c4e6c59ccf1
 	github.com/cloudfoundry-community/go-uaa v0.3.1
+	github.com/cloudfoundry-community/spring-cloud-services-cli-config-parser v1.0.3
 	github.com/pivotal-cf/brokerapi v6.4.2+incompatible
-	github.com/starkandwayne/spring-cloud-services-cli-config-parser v1.0.2
 	gopkg.in/yaml.v3 v3.0.1
 )
 

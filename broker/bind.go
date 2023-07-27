@@ -6,7 +6,7 @@ import (
 
 	"github.com/cloudfoundry-community/go-uaa"
 	brokerapi "github.com/pivotal-cf/brokerapi/domain"
-	"github.com/starkandwayne/scs-broker/broker/utilities"
+	"github.com/cloudfoundry-community/scs-broker/broker/utilities"
 )
 
 func (broker *SCSBroker) Bind(ctx context.Context, instanceID, bindingID string, details brokerapi.BindDetails, asyncAllowed bool) (brokerapi.Binding, error) {

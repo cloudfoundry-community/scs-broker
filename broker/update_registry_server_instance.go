@@ -13,8 +13,8 @@ import (
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3"
 	"code.cloudfoundry.org/lager"
 	brokerapi "github.com/pivotal-cf/brokerapi/domain"
-	"github.com/starkandwayne/scs-broker/broker/utilities"
-	scsccparser "github.com/starkandwayne/spring-cloud-services-cli-config-parser"
+	"github.com/cloudfoundry-community/scs-broker/broker/utilities"
+	scsccparser "github.com/cloudfoundry-community/spring-cloud-services-cli-config-parser"
 )
 
 func (broker *SCSBroker) updateRegistryServerInstance(cxt context.Context, instanceID string, details brokerapi.UpdateDetails, asyncAllowed bool) (brokerapi.UpdateServiceSpec, error) {

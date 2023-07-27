@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	brokerapi "github.com/pivotal-cf/brokerapi/domain"
-	"github.com/starkandwayne/scs-broker/broker/utilities"
+	"github.com/cloudfoundry-community/scs-broker/broker/utilities"
 )
 
 func (broker *SCSBroker) Unbind(ctx context.Context, instanceID, bindingID string, details brokerapi.UnbindDetails, asyncAllowed bool) (brokerapi.UnbindSpec, error) {

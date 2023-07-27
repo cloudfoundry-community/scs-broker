@@ -13,7 +13,7 @@ import (
 
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3"
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/constant"
-	"github.com/starkandwayne/scs-broker/broker/utilities"
+	"github.com/cloudfoundry-community/scs-broker/broker/utilities"
 )
 
 func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instanceId string, jsonparams string, params map[string]string) (string, error) {

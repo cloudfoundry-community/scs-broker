@@ -6,9 +6,9 @@ import (
 
 	"code.cloudfoundry.org/lager"
 	"github.com/pivotal-cf/brokerapi"
-	"github.com/starkandwayne/scs-broker/broker"
-	"github.com/starkandwayne/scs-broker/config"
-	"github.com/starkandwayne/scs-broker/httpartifacttransport"
+	"github.com/cloudfoundry-community/scs-broker/broker"
+	"github.com/cloudfoundry-community/scs-broker/config"
+	"github.com/cloudfoundry-community/scs-broker/httpartifacttransport"
 )
 
 var brokerLogger lager.Logger
