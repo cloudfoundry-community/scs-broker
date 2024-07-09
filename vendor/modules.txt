@@ -103,8 +103,8 @@ github.com/cloudfoundry/sonde-go/events
 github.com/cppforlife/go-patch/patch
 # github.com/drewolson/testflight v1.0.0
 ## explicit
-# github.com/gogo/protobuf v1.3.1
-## explicit
+# github.com/gogo/protobuf v1.3.2
+## explicit; go 1.15
 github.com/gogo/protobuf/gogoproto
 github.com/gogo/protobuf/proto
 github.com/gogo/protobuf/protoc-gen-gogo/descriptor
@@ -157,11 +157,11 @@ github.com/sirupsen/logrus
 # github.com/tedsuo/rata v1.0.0
 ## explicit
 github.com/tedsuo/rata
-# golang.org/x/crypto v0.0.0-20210817164053-32db794688a5
-## explicit; go 1.17
+# golang.org/x/crypto v0.25.0
+## explicit; go 1.20
 golang.org/x/crypto/ssh/terminal
-# golang.org/x/net v0.0.0-20220425223048-2871e0cb64e4
-## explicit; go 1.17
+# golang.org/x/net v0.27.0
+## explicit; go 1.18
 golang.org/x/net/context
 golang.org/x/net/context/ctxhttp
 # golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
@@ -169,14 +169,13 @@ golang.org/x/net/context/ctxhttp
 golang.org/x/oauth2
 golang.org/x/oauth2/clientcredentials
 golang.org/x/oauth2/internal
-# golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e
-## explicit; go 1.17
-golang.org/x/sys/internal/unsafeheader
+# golang.org/x/sys v0.22.0
+## explicit; go 1.18
 golang.org/x/sys/plan9
 golang.org/x/sys/unix
 golang.org/x/sys/windows
-# golang.org/x/term v0.0.0-20210927222741-03fcf44c2211
-## explicit; go 1.17
+# golang.org/x/term v0.22.0
+## explicit; go 1.18
 golang.org/x/term
 # google.golang.org/appengine v1.6.1
 ## explicit
