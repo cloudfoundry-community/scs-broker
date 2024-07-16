@@ -68,6 +68,15 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 		return "", err
 	}
 
+	if broker.Config.JavaConfig.JBPConfigOpenJDKJRE != "" {
+		_, _, err = cfClient.UpdateApplicationEnvironmentVariables(app.GUID, ccv3.EnvironmentVariables{
+			"JBP_CONFIG_OPEN_JDK_JRE": {Value: broker.Config.JavaConfig.JBPConfigOpenJDKJRE, IsSet: true},
+		})
+		if err != nil {
+			return "", fmt.Errorf("failed to set JBP_CONFIG_OPEN_JDK_JRE: %v", err)
+		}
+	}
+
 	broker.Logger.Info("Creating Package")
 	pkg, _, err := cfClient.CreatePackage(
 		ccv3.Package{
