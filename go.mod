@@ -1,6 +1,6 @@
 module github.com/cloudfoundry-community/scs-broker
 
-go 1.20
+go 1.22
 
 replace github.com/docker/docker => github.com/docker/engine v17.12.0-ce-rc1.0.20200531234253-77e06fda0c94+incompatible
 
@@ -39,7 +39,7 @@ require (
 	github.com/cloudfoundry/sonde-go v0.0.0-20200416163440-a42463ba266b // indirect
 	github.com/cppforlife/go-patch v0.2.0 // indirect
 	github.com/drewolson/testflight v1.0.0 // indirect
-	github.com/gogo/protobuf v1.3.1 // indirect
+	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/uuid v1.0.0 // indirect
 	github.com/gorilla/mux v1.7.4 // indirect
@@ -53,11 +53,11 @@ require (
 	github.com/sirupsen/logrus v1.6.0 // indirect
 	github.com/stretchr/testify v1.7.0 // indirect
 	github.com/tedsuo/rata v1.0.0 // indirect
-	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 // indirect
-	golang.org/x/net v0.0.0-20220425223048-2871e0cb64e4 // indirect
+	golang.org/x/crypto v0.25.0 // indirect
+	golang.org/x/net v0.27.0 // indirect
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45 // indirect
-	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
-	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
+	golang.org/x/sys v0.22.0 // indirect
+	golang.org/x/term v0.22.0 // indirect
 	google.golang.org/appengine v1.6.1 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/cheggaaa/pb.v1 v1.0.28 // indirect

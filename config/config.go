@@ -9,21 +9,26 @@ import (
 const ConfigEnvVarName string = "SCS_BROKER_CONFIG"
 
 type Config struct {
-	Auth                Auth      `yaml:"broker_auth"`
-	BrokerName          string    `yaml:"broker_name"`
-	BrokerID            string    `yaml:"broker_id"`
-	ArtifactsDir        string    `yaml:"artifacts_directory"`
-	CfConfig            CfConfig  `yaml:"cloud_foundry_config"`
-	Description         string    `yaml:"description"`
-	LongDescription     string    `yaml:"long_description"`
-	ProviderDisplayName string    `yaml:"provider_display_name"`
-	DocumentationURL    string    `yaml:"documentation_url"`
-	SupportURL          string    `yaml:"support_url"`
-	DisplayName         string    `yaml:"display_name"`
-	IconImage           string    `yaml:"icon_image"`
-	InstanceSpaceGUID   string    `yaml:"instance_space_guid"`
-	InstanceDomain      string    `yaml:"instance_domain"`
-	Services            []Service `yaml:"services"`
+	Auth                Auth       `yaml:"broker_auth"`
+	BrokerName          string     `yaml:"broker_name"`
+	BrokerID            string     `yaml:"broker_id"`
+	ArtifactsDir        string     `yaml:"artifacts_directory"`
+	CfConfig            CfConfig   `yaml:"cloud_foundry_config"`
+	Description         string     `yaml:"description"`
+	LongDescription     string     `yaml:"long_description"`
+	ProviderDisplayName string     `yaml:"provider_display_name"`
+	DocumentationURL    string     `yaml:"documentation_url"`
+	SupportURL          string     `yaml:"support_url"`
+	DisplayName         string     `yaml:"display_name"`
+	IconImage           string     `yaml:"icon_image"`
+	InstanceSpaceGUID   string     `yaml:"instance_space_guid"`
+	InstanceDomain      string     `yaml:"instance_domain"`
+	Services            []Service  `yaml:"services"`
+	JavaConfig          JavaConfig `yaml:"java_config"`
+}
+
+type JavaConfig struct {
+	JBPConfigOpenJDKJRE string `yaml:"JBP_CONFIG_OPEN_JDK_JRE"`
 }
 
 type Auth struct {
