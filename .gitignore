@@ -20,3 +20,4 @@ main
 # Ignore built artifacts
 scs-broker
 builds/
+.DS_Store
