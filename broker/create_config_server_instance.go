@@ -26,7 +26,7 @@ func (broker *SCSBroker) createConfigServerInstance(serviceId string, instanceId
 	broker.Logger.Info("Creating Application")
 
 	var buildpacks []string
-	if buildpack, exists := params["buildpack"]; exists {
+	if buildpack, exists := params["services_buildpack"]; exists {
 		buildpacks = []string{buildpack}
 	} else {
 		buildpacks = []string{"java_buildpack"}
