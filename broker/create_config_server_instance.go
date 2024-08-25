@@ -25,18 +25,11 @@ func (broker *SCSBroker) createConfigServerInstance(serviceId string, instanceId
 	spaceGUID := broker.Config.InstanceSpaceGUID
 	broker.Logger.Info("Creating Application")
 
-	var buildpacks []string
-	if buildpack, exists := params["buildpack"]; exists {
-		buildpacks = []string{buildpack}
-	} else {
-		buildpacks = []string{"java_buildpack"}
-	}
-
 	app, _, err := cfClient.CreateApplication(
 		ccv3.Application{
 			Name:                appName,
 			LifecycleType:       constant.AppLifecycleTypeBuildpack,
-			LifecycleBuildpacks: buildpacks,
+			LifecycleBuildpacks: []string{service.ServiceBuildpack},
 			State:               constant.ApplicationStopped,
 			Relationships: ccv3.Relationships{
 				constant.RelationshipTypeSpace: ccv3.Relationship{GUID: spaceGUID},
