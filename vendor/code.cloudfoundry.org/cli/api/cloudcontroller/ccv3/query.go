@@ -41,6 +41,10 @@ const (
 	PathsFilter QueryKey = "paths"
 	// PathFilter is a query param for getting an object with the given host
 	PathFilter QueryKey = "path"
+	// PortFilter is a query param for getting an object with the given port (TCP routes)
+	PortFilter QueryKey = "port"
+	// PortsFilter is a query param for getting an object with the given ports (TCP routes)
+	PortsFilter QueryKey = "ports"
 	// RoleTypesFilter is a query param for getting a role by type
 	RoleTypesFilter QueryKey = "types"
 	// StackFilter is a query parameter for listing objects by stack name
@@ -55,12 +59,16 @@ const (
 	StatesFilter QueryKey = "states"
 	// ServiceBrokerNamesFilter is a query parameter when getting plans or offerings according to the Service Brokers that it relates to
 	ServiceBrokerNamesFilter QueryKey = "service_broker_names"
-	// ServiceBrokerGUIDsFilter is a query parameter for getting according to the service broker GUID
+	// ServiceBrokerGUIDsFilter is a query parameter for getting resources according to the service broker GUID
 	ServiceBrokerGUIDsFilter QueryKey = "service_broker_guids"
 	// ServiceOfferingNamesFilter is a query parameter when getting a plan according to the Service Offerings that it relates to
 	ServiceOfferingNamesFilter QueryKey = "service_offering_names"
-	// ServiceOfferingGUIDsFilter is a query parameter when getting according to service offering GUIDs
+	// ServiceOfferingGUIDsFilter is a query parameter when getting resources according to service offering GUIDs
 	ServiceOfferingGUIDsFilter QueryKey = "service_offering_guids"
+	// FieldsServiceOfferingServiceBroker is a query parameter to include specific fields from a service broker in a plan response
+	FieldsServiceOfferingServiceBroker QueryKey = "fields[service_offering.service_broker]"
+	// FieldsServiceBroker is a query parameter to include specific fields from a service broker in an offering response
+	FieldsServiceBroker QueryKey = "fields[service_broker]"
 
 	// OrderBy is a query parameter to specify how to order objects.
 	OrderBy QueryKey = "order_by"
@@ -108,6 +116,15 @@ type Query struct {
 func FormatQueryParameters(queries []Query) url.Values {
 	params := url.Values{}
 	for _, query := range queries {
+		if query.Key == NameFilter {
+			encodedParamValues := []string{}
+			for _, valString := range query.Values {
+				commaEncoded := strings.ReplaceAll(valString, ",", "%2C")
+				encodedParamValues = append(encodedParamValues, commaEncoded)
+			}
+			query.Values = encodedParamValues
+		}
+
 		params.Add(string(query.Key), strings.Join(query.Values, ","))
 	}
 

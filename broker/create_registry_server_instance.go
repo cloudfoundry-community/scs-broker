@@ -13,6 +13,7 @@ import (
 
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3"
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/constant"
+	"code.cloudfoundry.org/cli/resources"
 	"github.com/cloudfoundry-community/scs-broker/broker/utilities"
 )
 
@@ -47,16 +48,16 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 	spaceGUID := broker.Config.InstanceSpaceGUID
 	buildpacks := []string{service.ServiceBuildpack}
 
-	appConfig := ccv3.Application{
+	appConfig := resources.Application{
 		Name:                appName,
 		LifecycleType:       constant.AppLifecycleTypeBuildpack,
 		LifecycleBuildpacks: buildpacks,
 		State:               constant.ApplicationStopped,
-		Relationships: ccv3.Relationships{
-			constant.RelationshipTypeSpace: ccv3.Relationship{GUID: spaceGUID},
+		Relationships: resources.Relationships{
+			constant.RelationshipTypeSpace: resources.Relationship{GUID: spaceGUID},
 		},
 	}
-	broker.Logger.Info(fmt.Sprintf("RS %s => ccv3.Application Config: %v", instanceId, appConfig))
+	broker.Logger.Info(fmt.Sprintf("RS %s => resources.Application Config: %v", instanceId, appConfig))
 
 	broker.Logger.Info(fmt.Sprintf("RS %s => Creating Application: %s", instanceId, appName))
 	app, _, err := cfClient.CreateApplication(appConfig)
@@ -78,7 +79,7 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 	}
 
 	if broker.Config.JavaConfig.JBPConfigOpenJDKJRE != "" {
-		_, _, err = cfClient.UpdateApplicationEnvironmentVariables(app.GUID, ccv3.EnvironmentVariables{
+		_, _, err = cfClient.UpdateApplicationEnvironmentVariables(app.GUID, resources.EnvironmentVariables{
 			"JBP_CONFIG_OPEN_JDK_JRE": {Value: broker.Config.JavaConfig.JBPConfigOpenJDKJRE, IsSet: true},
 		})
 		if err != nil {
@@ -88,10 +89,10 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 
 	broker.Logger.Info("RS %s => Creating Package")
 	pkg, _, err := cfClient.CreatePackage(
-		ccv3.Package{
+		resources.Package{
 			Type: constant.PackageTypeBits,
-			Relationships: ccv3.Relationships{
-				constant.RelationshipTypeApplication: ccv3.Relationship{GUID: app.GUID},
+			Relationships: resources.Relationships{
+				constant.RelationshipTypeApplication: resources.Relationship{GUID: app.GUID},
 			},
 		})
 	if err != nil {
@@ -154,7 +155,7 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 		return "", errors.New(fmt.Sprintf("RS %s => no domains found for this instance", instanceId))
 	}
 
-	route, _, err := cfClient.CreateRoute(ccv3.Route{
+	route, _, err := cfClient.CreateRoute(resources.Route{
 		SpaceGUID:  spaceGUID,
 		DomainGUID: domains[0].GUID,
 		Host:       appName,

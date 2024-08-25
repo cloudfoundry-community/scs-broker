@@ -8,6 +8,7 @@ import (
 
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3"
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/constant"
+	"code.cloudfoundry.org/cli/resources"
 	"github.com/cloudfoundry-community/scs-broker/broker/utilities"
 )
 
@@ -28,13 +29,13 @@ func (broker *SCSBroker) createConfigServerInstance(serviceId string, instanceId
 	spaceGUID := broker.Config.InstanceSpaceGUID
 	buildpacks := []string{service.ServiceBuildpack}
 
-	appConfig := ccv3.Application{
+	appConfig := resources.Application{
 		Name:                appName,
 		LifecycleType:       constant.AppLifecycleTypeBuildpack,
 		LifecycleBuildpacks: buildpacks,
 		State:               constant.ApplicationStopped,
-		Relationships: ccv3.Relationships{
-			constant.RelationshipTypeSpace: ccv3.Relationship{GUID: spaceGUID},
+		Relationships: resources.Relationships{
+			constant.RelationshipTypeSpace: resources.Relationship{GUID: spaceGUID},
 		},
 	}
 	broker.Logger.Info(fmt.Sprintf("CS %s => Config Server ccv3.Application Config: %v", instanceId, appConfig))
@@ -62,7 +63,7 @@ func (broker *SCSBroker) createConfigServerInstance(serviceId string, instanceId
 	}
 
 	if broker.Config.JavaConfig.JBPConfigOpenJDKJRE != "" {
-		_, _, err = cfClient.UpdateApplicationEnvironmentVariables(app.GUID, ccv3.EnvironmentVariables{
+		_, _, err = cfClient.UpdateApplicationEnvironmentVariables(app.GUID, resources.EnvironmentVariables{
 			"JBP_CONFIG_OPEN_JDK_JRE": {Value: broker.Config.JavaConfig.JBPConfigOpenJDKJRE, IsSet: true},
 		})
 		if err != nil {
@@ -70,10 +71,10 @@ func (broker *SCSBroker) createConfigServerInstance(serviceId string, instanceId
 		}
 	}
 
-	pkgConfig := ccv3.Package{
+	pkgConfig := resources.Package{
 		Type: constant.PackageTypeBits,
-		Relationships: ccv3.Relationships{
-			constant.RelationshipTypeApplication: ccv3.Relationship{GUID: app.GUID},
+		Relationships: resources.Relationships{
+			constant.RelationshipTypeApplication: resources.Relationship{GUID: app.GUID},
 		},
 	}
 	broker.Logger.Info(fmt.Sprintf("CS %s => Creating Package with config: %v", instanceId, pkgConfig))
@@ -137,7 +138,7 @@ func (broker *SCSBroker) createConfigServerInstance(serviceId string, instanceId
 		return "", errors.New(fmt.Sprintf("CS %s => no domains found for this instance", instanceId))
 	}
 
-	routeConfig := ccv3.Route{
+	routeConfig := resources.Route{
 		SpaceGUID:  spaceGUID,
 		DomainGUID: domains[0].GUID,
 		Host:       appName,

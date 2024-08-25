@@ -6,6 +6,7 @@ import (
 	"code.cloudfoundry.org/cli/api/cloudcontroller"
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/constant"
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/internal"
+	"code.cloudfoundry.org/cli/resources"
 )
 
 type Deployment struct {
@@ -13,26 +14,35 @@ type Deployment struct {
 	State         constant.DeploymentState
 	StatusValue   constant.DeploymentStatusValue
 	StatusReason  constant.DeploymentStatusReason
+	RevisionGUID  string
 	DropletGUID   string
 	CreatedAt     string
 	UpdatedAt     string
-	Relationships Relationships
+	Relationships resources.Relationships
 	NewProcesses  []Process
 }
 
 // MarshalJSON converts a Deployment into a Cloud Controller Deployment.
 func (d Deployment) MarshalJSON() ([]byte, error) {
+	type Revision struct {
+		GUID string `json:"guid,omitempty"`
+	}
 	type Droplet struct {
 		GUID string `json:"guid,omitempty"`
 	}
 
 	var ccDeployment struct {
-		Droplet       *Droplet      `json:"droplet,omitempty"`
-		Relationships Relationships `json:"relationships,omitempty"`
+		Droplet       *Droplet                `json:"droplet,omitempty"`
+		Revision      *Revision               `json:"revision,omitempty"`
+		Relationships resources.Relationships `json:"relationships,omitempty"`
 	}
 
 	if d.DropletGUID != "" {
 		ccDeployment.Droplet = &Droplet{d.DropletGUID}
+	}
+
+	if d.RevisionGUID != "" {
+		ccDeployment.Revision = &Revision{d.RevisionGUID}
 	}
 
 	ccDeployment.Relationships = d.Relationships
@@ -45,14 +55,14 @@ func (d *Deployment) UnmarshalJSON(data []byte) error {
 	var ccDeployment struct {
 		GUID          string                   `json:"guid,omitempty"`
 		CreatedAt     string                   `json:"created_at,omitempty"`
-		Relationships Relationships            `json:"relationships,omitempty"`
+		Relationships resources.Relationships  `json:"relationships,omitempty"`
 		State         constant.DeploymentState `json:"state,omitempty"`
 		Status        struct {
 			Value  constant.DeploymentStatusValue  `json:"value"`
 			Reason constant.DeploymentStatusReason `json:"reason"`
 		} `json:"status"`
-		Droplet      Droplet   `json:"droplet,omitempty"`
-		NewProcesses []Process `json:"new_processes,omitempty"`
+		Droplet      resources.Droplet `json:"droplet,omitempty"`
+		NewProcesses []Process         `json:"new_processes,omitempty"`
 	}
 	err := cloudcontroller.DecodeJSON(data, &ccDeployment)
 	if err != nil {
@@ -83,7 +93,24 @@ func (client *Client) CancelDeployment(deploymentGUID string) (Warnings, error) 
 func (client *Client) CreateApplicationDeployment(appGUID string, dropletGUID string) (string, Warnings, error) {
 	dep := Deployment{
 		DropletGUID:   dropletGUID,
-		Relationships: Relationships{constant.RelationshipTypeApplication: Relationship{GUID: appGUID}},
+		Relationships: resources.Relationships{constant.RelationshipTypeApplication: resources.Relationship{GUID: appGUID}},
+	}
+
+	var responseBody Deployment
+
+	_, warnings, err := client.MakeRequest(RequestParams{
+		RequestName:  internal.PostApplicationDeploymentRequest,
+		RequestBody:  dep,
+		ResponseBody: &responseBody,
+	})
+
+	return responseBody.GUID, warnings, err
+}
+
+func (client *Client) CreateApplicationDeploymentByRevision(appGUID string, revisionGUID string) (string, Warnings, error) {
+	dep := Deployment{
+		RevisionGUID:  revisionGUID,
+		Relationships: resources.Relationships{constant.RelationshipTypeApplication: resources.Relationship{GUID: appGUID}},
 	}
 
 	var responseBody Deployment

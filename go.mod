@@ -13,7 +13,7 @@ replace github.com/cloudfoundry/sonde-go => github.com/cloudfoundry/sonde-go v0.
 replace code.cloudfoundry.org/go-log-cache => code.cloudfoundry.org/go-log-cache v1.0.1-0.20200316170138-f466e0302c34
 
 require (
-	code.cloudfoundry.org/cli v6.51.0+incompatible
+	code.cloudfoundry.org/cli v7.1.0+incompatible
 	code.cloudfoundry.org/lager v2.0.0+incompatible
 	github.com/cloudfoundry-community/go-cf-clients-helper v1.0.1
 	github.com/cloudfoundry-community/go-cfclient/v2 v2.0.0
@@ -26,6 +26,7 @@ require (
 require (
 	code.cloudfoundry.org/bytefmt v0.0.0-20200131002437-cf55d5288a48 // indirect
 	code.cloudfoundry.org/cfnetworking-cli-api v0.0.0-20190103195135-4b04f26287a6 // indirect
+	code.cloudfoundry.org/jsonry v1.1.4 // indirect
 	code.cloudfoundry.org/tlsconfig v0.0.0-20200131000646-bbe0f8da39b3 // indirect
 	github.com/Masterminds/semver v1.4.2 // indirect
 	github.com/SermoDigital/jose v0.9.1 // indirect
@@ -43,6 +44,7 @@ require (
 	github.com/google/uuid v1.0.0 // indirect
 	github.com/gorilla/mux v1.7.4 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
+	github.com/jessevdk/go-flags v0.0.0-20170926144705-f88afde2fa19 // indirect
 	github.com/konsorten/go-windows-terminal-sequences v1.0.3 // indirect
 	github.com/mailru/easyjson v0.7.1 // indirect
 	github.com/mattn/go-colorable v0.1.11 // indirect

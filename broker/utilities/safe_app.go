@@ -1,9 +1,9 @@
 package utilities
 
-import "code.cloudfoundry.org/cli/api/cloudcontroller/ccv3"
+import "code.cloudfoundry.org/cli/resources"
 
-func SafeApp(app ccv3.Application) ccv3.Application {
-	return ccv3.Application{
+func SafeApp(app resources.Application) resources.Application {
+	return resources.Application{
 		GUID:                app.GUID,
 		StackName:           app.StackName,
 		LifecycleBuildpacks: app.LifecycleBuildpacks,

@@ -7,12 +7,13 @@ import (
 	"strings"
 
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3"
+	"code.cloudfoundry.org/cli/resources"
 	"code.cloudfoundry.org/cli/types"
 
 	"github.com/cloudfoundry-community/scs-broker/broker/utilities"
 )
 
-func (broker *SCSBroker) UpdateRegistryEnvironment(cfClient *ccv3.Client, app *ccv3.Application, info *ccv3.Info, kind string, instanceId string, rc *utilities.RegistryConfig, params map[string]string) error {
+func (broker *SCSBroker) UpdateRegistryEnvironment(cfClient *ccv3.Client, app *resources.Application, info *ccv3.Info, kind string, instanceId string, rc *utilities.RegistryConfig, params map[string]string) error {
 
 	var profiles []string
 	for key, value := range params {
@@ -55,7 +56,7 @@ func (broker *SCSBroker) UpdateRegistryEnvironment(cfClient *ccv3.Client, app *c
 		return err
 	}
 
-	_, _, err = cfClient.UpdateApplicationEnvironmentVariables(app.GUID, ccv3.EnvironmentVariables{
+	_, _, err = cfClient.UpdateApplicationEnvironmentVariables(app.GUID, resources.EnvironmentVariables{
 		"JWK_SET_URI":            *types.NewFilteredString(fmt.Sprintf("%v/token_keys", info.UAA())),
 		"SKIP_SSL_VALIDATION":    *types.NewFilteredString(strconv.FormatBool(broker.Config.CfConfig.SkipSslValidation)),
 		"REQUIRED_AUDIENCE":      *types.NewFilteredString(fmt.Sprintf("%s.%v", kind, instanceId)),

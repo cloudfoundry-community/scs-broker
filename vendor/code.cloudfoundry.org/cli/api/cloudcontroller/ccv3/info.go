@@ -29,6 +29,9 @@ type InfoLinks struct {
 
 	// UAA is the link to the UAA API.
 	UAA APILink `json:"uaa"`
+
+	// Login is the link to the Login API.
+	Login APILink `json:"login"`
 }
 
 // Info represents a GET response from the '/' endpoint of the cloud
@@ -75,6 +78,7 @@ func (info Info) OAuthClient() string {
 	return info.Links.AppSSH.Meta.OAuthClient
 }
 
+// Routing returns the HREF of the routing API.
 func (info Info) Routing() string {
 	return info.Links.Routing.HREF
 }
@@ -82,6 +86,11 @@ func (info Info) Routing() string {
 // UAA returns the HREF of the UAA server.
 func (info Info) UAA() string {
 	return info.Links.UAA.HREF
+}
+
+// Login returns the HREF of the login server.
+func (info Info) Login() string {
+	return info.Links.Login.HREF
 }
 
 // ccv3Link returns the HREF of the CloudController v3 API.
