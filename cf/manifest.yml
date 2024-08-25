@@ -2,6 +2,6 @@
 applications:
   - name: scs-broker
     path: ../
-    buildpack: go_buildpack
+    buildpack: "go_buildpack"
     env:
       SCS_BROKER_CONFIG: ((scs_broker_config))

@@ -16,6 +16,7 @@ import (
 	"github.com/cloudfoundry-community/scs-broker/broker/utilities"
 )
 
+// jsonparams are the parameters passed in via the -c '{}' cf cli command line argument when creating the service instance.
 func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instanceId string, jsonparams string, params map[string]string) (string, error) {
 	service, err := broker.GetServiceByServiceID(serviceId)
 	if err != nil {
@@ -41,19 +42,12 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 	appName := utilities.MakeAppName(serviceId, instanceId)
 	spaceGUID := broker.Config.InstanceSpaceGUID
 
-	var buildpacks []string
-	if buildpack, exists := params["buildpack"]; exists {
-		buildpacks = []string{buildpack}
-	} else {
-		buildpacks = []string{"java_buildpack"}
-	}
-
 	broker.Logger.Info("Creating Application")
 	app, _, err := cfClient.CreateApplication(
 		ccv3.Application{
 			Name:                appName,
 			LifecycleType:       constant.AppLifecycleTypeBuildpack,
-			LifecycleBuildpacks: buildpacks,
+			LifecycleBuildpacks: []string{service.ServiceBuildpack},
 			State:               constant.ApplicationStopped,
 			Relationships: ccv3.Relationships{
 				constant.RelationshipTypeSpace: ccv3.Relationship{GUID: spaceGUID},
