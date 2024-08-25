@@ -34,9 +34,7 @@ func (broker *SCSBroker) createConfigServerInstance(serviceId string, instanceId
 		LifecycleType:       constant.AppLifecycleTypeBuildpack,
 		LifecycleBuildpacks: buildpacks,
 		State:               constant.ApplicationStopped,
-		Relationships: resources.Relationships{
-			constant.RelationshipTypeSpace: resources.Relationship{GUID: spaceGUID},
-		},
+		SpaceGUID:           spaceGUID,
 	}
 	broker.Logger.Info(fmt.Sprintf("CS %s => Config Server ccv3.Application Config: %v", instanceId, appConfig))
 
@@ -63,7 +61,10 @@ func (broker *SCSBroker) createConfigServerInstance(serviceId string, instanceId
 	}
 
 	if broker.Config.JavaConfig.JBPConfigOpenJDKJRE != "" {
-		_, _, err = cfClient.UpdateApplicationEnvironmentVariables(app.GUID, resources.EnvironmentVariables{
+		//_, _, err = cfClient.UpdateApplicationEnvironmentVariables(app.GUID, resources.EnvironmentVariables{
+		//	"JBP_CONFIG_OPEN_JDK_JRE": {Value: broker.Config.JavaConfig.JBPConfigOpenJDKJRE, IsSet: true},
+		//})
+		_, _, err = cfClient.UpdateApplicationEnvironmentVariables(app.GUID, ccv3.EnvironmentVariables{
 			"JBP_CONFIG_OPEN_JDK_JRE": {Value: broker.Config.JavaConfig.JBPConfigOpenJDKJRE, IsSet: true},
 		})
 		if err != nil {
@@ -71,7 +72,7 @@ func (broker *SCSBroker) createConfigServerInstance(serviceId string, instanceId
 		}
 	}
 
-	pkgConfig := resources.Package{
+	pkgConfig := ccv3.Package{
 		Type: constant.PackageTypeBits,
 		Relationships: resources.Relationships{
 			constant.RelationshipTypeApplication: resources.Relationship{GUID: app.GUID},

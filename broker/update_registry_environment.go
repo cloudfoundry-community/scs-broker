@@ -29,8 +29,8 @@ func (broker *SCSBroker) UpdateRegistryEnvironment(cfClient *ccv3.Client, app *r
 			profiles = append(profiles, "vault")
 		}
 
-		if key == "SPRING_CLOUD_CONFIG_SERVER_COMPOSIT" {
-			profiles = append(profiles, "composit")
+		if key == "SPRING_CLOUD_CONFIG_SERVER_COMPOSITE" {
+			profiles = append(profiles, "composite")
 		}
 
 		if key == "SPRING_CLOUD_CONFIG_SERVER_CREDHUB" {
@@ -56,7 +56,7 @@ func (broker *SCSBroker) UpdateRegistryEnvironment(cfClient *ccv3.Client, app *r
 		return err
 	}
 
-	_, _, err = cfClient.UpdateApplicationEnvironmentVariables(app.GUID, resources.EnvironmentVariables{
+	_, _, err = cfClient.UpdateApplicationEnvironmentVariables(app.GUID, ccv3.EnvironmentVariables{
 		"JWK_SET_URI":            *types.NewFilteredString(fmt.Sprintf("%v/token_keys", info.UAA())),
 		"SKIP_SSL_VALIDATION":    *types.NewFilteredString(strconv.FormatBool(broker.Config.CfConfig.SkipSslValidation)),
 		"REQUIRED_AUDIENCE":      *types.NewFilteredString(fmt.Sprintf("%s.%v", kind, instanceId)),

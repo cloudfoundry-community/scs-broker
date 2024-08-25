@@ -53,9 +53,7 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 		LifecycleType:       constant.AppLifecycleTypeBuildpack,
 		LifecycleBuildpacks: buildpacks,
 		State:               constant.ApplicationStopped,
-		Relationships: resources.Relationships{
-			constant.RelationshipTypeSpace: resources.Relationship{GUID: spaceGUID},
-		},
+		SpaceGUID:           spaceGUID,
 	}
 	broker.Logger.Info(fmt.Sprintf("RS %s => resources.Application Config: %v", instanceId, appConfig))
 
@@ -79,17 +77,14 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 	}
 
 	if broker.Config.JavaConfig.JBPConfigOpenJDKJRE != "" {
-		_, _, err = cfClient.UpdateApplicationEnvironmentVariables(app.GUID, resources.EnvironmentVariables{
+		_, _, err = cfClient.UpdateApplicationEnvironmentVariables(app.GUID, ccv3.EnvironmentVariables{
 			"JBP_CONFIG_OPEN_JDK_JRE": {Value: broker.Config.JavaConfig.JBPConfigOpenJDKJRE, IsSet: true},
 		})
-		if err != nil {
-			return "", fmt.Errorf("RS %s => failed to set JBP_CONFIG_OPEN_JDK_JRE: %v", instanceId, err)
-		}
 	}
 
 	broker.Logger.Info("RS %s => Creating Package")
 	pkg, _, err := cfClient.CreatePackage(
-		resources.Package{
+		ccv3.Package{
 			Type: constant.PackageTypeBits,
 			Relationships: resources.Relationships{
 				constant.RelationshipTypeApplication: resources.Relationship{GUID: app.GUID},

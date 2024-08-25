@@ -7,7 +7,7 @@ import (
 )
 
 func (broker *SCSBroker) scaleRegistryServer(cfClient *ccv3.Client, app *resources.Application, count int) error {
-	p := resources.Process{
+	p := ccv3.Process{
 		Type:       "web",
 		Instances:  types.NullInt{Value: count, IsSet: true},
 		MemoryInMB: types.NullUint64{Value: 0, IsSet: false},

@@ -15,51 +15,54 @@ replace code.cloudfoundry.org/go-log-cache => code.cloudfoundry.org/go-log-cache
 require (
 	code.cloudfoundry.org/cli v7.1.0+incompatible
 	code.cloudfoundry.org/lager v2.0.0+incompatible
-	github.com/cloudfoundry-community/go-cf-clients-helper v1.0.1
+	github.com/cloudfoundry-community/go-cf-clients-helper v1.0.3
 	github.com/cloudfoundry-community/go-cfclient/v2 v2.0.0
-	github.com/cloudfoundry-community/go-uaa v0.3.1
+	github.com/cloudfoundry-community/go-uaa v0.3.3
 	github.com/cloudfoundry-community/spring-cloud-services-cli-config-parser v1.0.3
+	github.com/moby/term v0.5.0
 	github.com/pivotal-cf/brokerapi v6.4.2+incompatible
 	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
-	code.cloudfoundry.org/bytefmt v0.0.0-20200131002437-cf55d5288a48 // indirect
+	code.cloudfoundry.org/bytefmt v0.3.0 // indirect
 	code.cloudfoundry.org/cfnetworking-cli-api v0.0.0-20190103195135-4b04f26287a6 // indirect
 	code.cloudfoundry.org/jsonry v1.1.4 // indirect
-	code.cloudfoundry.org/tlsconfig v0.0.0-20200131000646-bbe0f8da39b3 // indirect
-	github.com/Masterminds/semver v1.4.2 // indirect
+	code.cloudfoundry.org/tlsconfig v0.1.0 // indirect
+	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/SermoDigital/jose v0.9.1 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
-	github.com/bmatcuk/doublestar v1.3.1 // indirect
-	github.com/bmizerany/pat v0.0.0-20170815010413-6226ea591a40 // indirect
-	github.com/charlievieth/fs v0.0.0-20170613215519-7dc373669fa1 // indirect
-	github.com/cloudfoundry/bosh-cli v6.2.1+incompatible // indirect
-	github.com/cloudfoundry/bosh-utils v0.0.0-20200606100138-7f673ba6be2a // indirect
+	github.com/bmatcuk/doublestar v1.3.4 // indirect
+	github.com/bmizerany/pat v0.0.0-20210406213842-e4b6760bdd6f // indirect
+	github.com/charlievieth/fs v0.0.3 // indirect
+	github.com/cloudfoundry/bosh-cli v6.4.1+incompatible // indirect
+	github.com/cloudfoundry/bosh-utils v0.0.485 // indirect
 	github.com/cloudfoundry/noaa v2.1.0+incompatible // indirect
-	github.com/cloudfoundry/sonde-go v0.0.0-20200416163440-a42463ba266b // indirect
+	github.com/cloudfoundry/sonde-go v0.0.0-20240807231527-361c7ad33dc7 // indirect
 	github.com/cppforlife/go-patch v0.2.0 // indirect
 	github.com/drewolson/testflight v1.0.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/google/uuid v1.0.0 // indirect
-	github.com/gorilla/mux v1.7.4 // indirect
-	github.com/gorilla/websocket v1.4.2 // indirect
-	github.com/jessevdk/go-flags v0.0.0-20170926144705-f88afde2fa19 // indirect
+	github.com/google/uuid v1.6.0 // indirect
+	github.com/gorilla/mux v1.8.1 // indirect
+	github.com/gorilla/websocket v1.5.3 // indirect
+	github.com/jessevdk/go-flags v1.6.1 // indirect
 	github.com/konsorten/go-windows-terminal-sequences v1.0.3 // indirect
-	github.com/mailru/easyjson v0.7.1 // indirect
+	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.11 // indirect
-	github.com/mattn/go-runewidth v0.0.9 // indirect
+	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c // indirect
-	github.com/pborman/uuid v1.2.0 // indirect
+	github.com/pborman/uuid v1.2.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/sirupsen/logrus v1.6.0 // indirect
+	github.com/rivo/uniseg v0.4.7 // indirect
+	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/stretchr/testify v1.9.0 // indirect
 	github.com/tedsuo/rata v1.0.0 // indirect
-	golang.org/x/crypto v0.25.0 // indirect
-	golang.org/x/net v0.27.0 // indirect
-	golang.org/x/oauth2 v0.21.0 // indirect
-	golang.org/x/sys v0.22.0 // indirect
-	golang.org/x/term v0.22.0 // indirect
+	github.com/vito/go-interact v1.0.0 // indirect
+	golang.org/x/crypto v0.26.0 // indirect
+	golang.org/x/net v0.28.0 // indirect
+	golang.org/x/oauth2 v0.22.0 // indirect
+	golang.org/x/sys v0.24.0 // indirect
+	golang.org/x/term v0.23.0 // indirect
 	gopkg.in/cheggaaa/pb.v1 v1.0.28 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
