@@ -58,21 +58,27 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 	broker.Logger.Info(fmt.Sprintf("RS %v => resources.Application Config: %v", instanceId, appConfig))
 
 	broker.Logger.Info(fmt.Sprintf("RS %v => Creating Application: %s", instanceId, appName))
-	app, _, err := cfClient.CreateApplication(appConfig)
+	app, warn, err := cfClient.CreateApplication(appConfig)
 	if err != nil {
+		broker.Logger.Info(fmt.Sprintf("RS %v => ERROR from cfClient.CreateApplication(): %s", instanceId, err.Error()))
 		return "", err
 	}
 	broker.Logger.Info(fmt.Sprintf("RS %v => Application Created: %s as: %+v", instanceId, appName, app))
 
 	info, _, _, err := cfClient.GetInfo()
 	if err != nil {
+		broker.Logger.Info(fmt.Sprintf("RS %v => ERROR from cfClient.GetInfo(): %s", instanceId, err.Error()))
 		return "", err
 	}
+	if warn != nil {
+		broker.Logger.Info(fmt.Sprintf("WARN: %v", warn))
+	}
+	broker.Logger.Info(fmt.Sprintf("RS %v => App Created: %s as: %+v", instanceId, appName, app))
 
 	broker.Logger.Info(fmt.Sprintf("RS %v => Updating App Environment with jsonparams: %v and params: %v", instanceId, jsonparams, params))
 	err = broker.UpdateAppEnvironment(cfClient, &app, &info, serviceId, instanceId, jsonparams, params)
-
 	if err != nil {
+		broker.Logger.Info(fmt.Sprintf("RS %v => ERROR from broker.UpdateAppEnvironment(): %s", instanceId, err.Error()))
 		return "", err
 	}
 

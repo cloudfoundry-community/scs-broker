@@ -37,21 +37,22 @@ func (broker *SCSBroker) createConfigServerInstance(serviceId string, instanceId
 		State:               constant.ApplicationStopped,
 		SpaceGUID:           spaceGUID,
 	}
-
 	broker.Logger.Info(fmt.Sprintf("CS %v => Config Server ccv3.Application Config: %+v", instanceId, appConfig))
 
 	broker.Logger.Info(fmt.Sprintf("CS %v => Creating Config Server Application: %s", instanceId, appName))
 	app, warn, err := cfClient.CreateApplication(appConfig)
 	if err != nil {
+		broker.Logger.Info(fmt.Sprintf("CS %v => ERROR from cfClient.CreateApplication(): %s", instanceId, err.Error()))
 		return "", err
 	}
 	if warn != nil {
-		broker.Logger.Info(fmt.Sprintf("WARN: %s", warn))
+		broker.Logger.Info(fmt.Sprintf("WARN: %v", warn))
 	}
 	broker.Logger.Info(fmt.Sprintf("CS %v => App Created: %s as: %+v", instanceId, appName, app))
 
 	info, _, _, err := cfClient.GetInfo()
 	if err != nil {
+		broker.Logger.Info(fmt.Sprintf("CS %v => ERROR from cfClient.GetInfo(): %s", instanceId, err.Error()))
 		return "", err
 	}
 	broker.Logger.Info(fmt.Sprintf("CS %v => cf Client Info: %+v", instanceId, info))
@@ -59,6 +60,7 @@ func (broker *SCSBroker) createConfigServerInstance(serviceId string, instanceId
 	broker.Logger.Info(fmt.Sprintf("CS %v => Updating App Environment with jsonparams: %+v and params: %+v", instanceId, jsonparams, params))
 	err = broker.UpdateAppEnvironment(cfClient, &app, &info, serviceId, instanceId, jsonparams, params)
 	if err != nil {
+		broker.Logger.Info(fmt.Sprintf("CS %v => ERROR from broker.UpdateAppEnvironment(): %s", instanceId, err.Error()))
 		return "", err
 	}
 
