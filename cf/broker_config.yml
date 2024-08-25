@@ -16,6 +16,7 @@
       service_description: Broker to create config-servers
       service_download_uri: (( param "Please override config_server_download_uri" ))
       service_buildpack: (( param "Please override config_server_service_buildpack" ))
+      service_stack: (( param "Please override config_server_service_stack" ))
     - service_name: service-registry
       service_id: service-registry
       service_plan_id: default
@@ -23,6 +24,7 @@
       service_description: Broker to create config-servers
       service_download_uri: (( param "Please override service_registry_download_uri" ))
       service_buildpack: (( param "Please override service_registry_service_buildpack" ))
+      service_stack: (( param "Please override service_registry_service_stack" ))
   cloud_foundry_config:
     api_url: (( param "Please override cloud_foundry_config.api_url" ))
     skip_ssl_validation: true

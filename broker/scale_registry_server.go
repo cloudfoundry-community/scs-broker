@@ -2,10 +2,11 @@ package broker
 
 import (
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3"
+	"code.cloudfoundry.org/cli/resources"
 	"code.cloudfoundry.org/cli/types"
 )
 
-func (broker *SCSBroker) scaleRegistryServer(cfClient *ccv3.Client, app *ccv3.Application, count int) error {
+func (broker *SCSBroker) scaleRegistryServer(cfClient *ccv3.Client, app *resources.Application, count int) error {
 	p := ccv3.Process{
 		Type:       "web",
 		Instances:  types.NullInt{Value: count, IsSet: true},
@@ -14,8 +15,14 @@ func (broker *SCSBroker) scaleRegistryServer(cfClient *ccv3.Client, app *ccv3.Ap
 	}
 
 	tentative, _, err := cfClient.CreateApplicationProcessScale(app.GUID, p)
+	if err != nil {
+		broker.Logger.Error("broker.ScaleRegistryServer: cfClient.CreateApplicationProcessScale()", err)
+	}
 
 	_, _, err = broker.pollScale(tentative, count)
+	if err != nil {
+		broker.Logger.Error("broker.ScaleRegistryServer: broker.pollScale()", err)
+	}
 
 	return err
 }

@@ -6,11 +6,12 @@ import (
 	"strings"
 
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3"
+	"code.cloudfoundry.org/cli/resources"
 	"code.cloudfoundry.org/cli/types"
 )
 
-// Updates the app enviornment variables for creating or updating an instance.
-func (broker *SCSBroker) UpdateAppEnvironment(cfClient *ccv3.Client, app *ccv3.Application, info *ccv3.Info, kind string, instanceId string, jsonparams string, params map[string]string) error {
+// Updates the app environment variables for creating or updating an instance.
+func (broker *SCSBroker) UpdateAppEnvironment(cfClient *ccv3.Client, app *resources.Application, info *ccv3.Info, kind string, instanceId string, jsonparams string, params map[string]string) error {
 
 	var hostKeySetSSH bool = false
 	var profiles []string
@@ -31,14 +32,13 @@ func (broker *SCSBroker) UpdateAppEnvironment(cfClient *ccv3.Client, app *ccv3.A
 			profiles = append(profiles, "vault")
 		}
 
-		if key == "SPRING_CLOUD_CONFIG_SERVER_COMPOSIT" {
-			profiles = append(profiles, "composit")
+		if key == "SPRING_CLOUD_CONFIG_SERVER_COMPOSITE" {
+			profiles = append(profiles, "composite")
 		}
 
 		if key == "SPRING_CLOUD_CONFIG_SERVER_CREDHUB" {
 			profiles = append(profiles, "credhub")
 		}
-
 	}
 
 	var profileString strings.Builder
@@ -66,6 +66,7 @@ func (broker *SCSBroker) UpdateAppEnvironment(cfClient *ccv3.Client, app *ccv3.A
 
 	_, _, err := cfClient.UpdateApplicationEnvironmentVariables(app.GUID, envVarToSet)
 	if err != nil {
+		broker.Logger.Error("broker.UpdateAppEnvironment: cfClient.UpdateApplicationEnvironmentVariables()", err)
 		return err
 	}
 

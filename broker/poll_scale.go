@@ -13,6 +13,7 @@ func (broker *SCSBroker) pollScale(proc ccv3.Process, desired int) (ccv3.Process
 	var allWarnings ccv3.Warnings
 	cfClient, err := broker.GetClient()
 	if err != nil {
+		broker.Logger.Error("broker.PollScale: broker.GetClient()", err)
 		return ccv3.Process{}, nil, errors.New("Couldn't start session: " + err.Error())
 	}
 
@@ -21,7 +22,7 @@ func (broker *SCSBroker) pollScale(proc ccv3.Process, desired int) (ccv3.Process
 	for !done {
 		time.Sleep(1000000000)
 		ready := 0
-		broker.Logger.Info("polling process instance states", lager.Data{
+		broker.Logger.Info("broker.PollScale: polling process instance states", lager.Data{
 			"process_guid": proc.GUID,
 		})
 
@@ -29,6 +30,7 @@ func (broker *SCSBroker) pollScale(proc ccv3.Process, desired int) (ccv3.Process
 		broker.showWarnings(warnings, proc)
 		allWarnings = append(allWarnings, warnings...)
 		if err != nil {
+			broker.Logger.Error("broker.PollScale: cfClient.GetProcessInstances()", err)
 			return ccv3.Process{}, allWarnings, err
 		}
 

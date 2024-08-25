@@ -7,12 +7,13 @@ import (
 	"strings"
 
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3"
+	"code.cloudfoundry.org/cli/resources"
 	"code.cloudfoundry.org/cli/types"
 
 	"github.com/cloudfoundry-community/scs-broker/broker/utilities"
 )
 
-func (broker *SCSBroker) UpdateRegistryEnvironment(cfClient *ccv3.Client, app *ccv3.Application, info *ccv3.Info, kind string, instanceId string, rc *utilities.RegistryConfig, params map[string]string) error {
+func (broker *SCSBroker) UpdateRegistryEnvironment(cfClient *ccv3.Client, app *resources.Application, info *ccv3.Info, kind string, instanceId string, rc *utilities.RegistryConfig, params map[string]string) error {
 
 	var profiles []string
 	for key, value := range params {
@@ -28,8 +29,8 @@ func (broker *SCSBroker) UpdateRegistryEnvironment(cfClient *ccv3.Client, app *c
 			profiles = append(profiles, "vault")
 		}
 
-		if key == "SPRING_CLOUD_CONFIG_SERVER_COMPOSIT" {
-			profiles = append(profiles, "composit")
+		if key == "SPRING_CLOUD_CONFIG_SERVER_COMPOSITE" {
+			profiles = append(profiles, "composite")
 		}
 
 		if key == "SPRING_CLOUD_CONFIG_SERVER_CREDHUB" {
@@ -37,6 +38,7 @@ func (broker *SCSBroker) UpdateRegistryEnvironment(cfClient *ccv3.Client, app *c
 		}
 
 		if err != nil {
+			broker.Logger.Error("broker.UpdateRegistryEnvironment: cfClient.UpdateApplicationEnvironmentVariables()", err)
 			return err
 		}
 	}
@@ -52,6 +54,7 @@ func (broker *SCSBroker) UpdateRegistryEnvironment(cfClient *ccv3.Client, app *c
 
 	peers, err := json.Marshal(rc.Peers)
 	if err != nil {
+		broker.Logger.Error("broker.UpdateRegistryEnvironment: json.Marshal()", err)
 		return err
 	}
 
@@ -64,6 +67,7 @@ func (broker *SCSBroker) UpdateRegistryEnvironment(cfClient *ccv3.Client, app *c
 		"PEERING_MODE":           *types.NewFilteredString(rc.Mode),
 	})
 	if err != nil {
+		broker.Logger.Error("broker.UpdateRegistryEnvironment: cfClient.UpdateApplicationEnvironmentVariables()", err)
 		return err
 	}
 

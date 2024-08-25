@@ -7,7 +7,7 @@ import "net/http"
 // HTTP method + non-parameter parts of the path + "Request"
 //
 // If the request returns a single entity by GUID, use the singular (for example
-// /v2/organizations/:organization_guid is GetOrganization).
+// /v3/organizations/:organization_guid is GetOrganization).
 const (
 	DeleteApplicationProcessInstanceRequest                     = "DeleteApplicationProcessInstance"
 	DeleteApplicationRequest                                    = "DeleteApplication"
@@ -38,6 +38,7 @@ const (
 	GetApplicationManifestRequest                               = "GetApplicationManifest"
 	GetApplicationProcessRequest                                = "GetApplicationProcess"
 	GetApplicationProcessesRequest                              = "GetApplicationProcesses"
+	GetApplicationRevisionsRequest                              = "GetApplicationRevisions"
 	GetApplicationRoutesRequest                                 = "GetApplicationRoutes"
 	GetApplicationTasksRequest                                  = "GetApplicationTasks"
 	GetApplicationsRequest                                      = "GetApplications"
@@ -51,6 +52,7 @@ const (
 	GetDomainsRequest                                           = "GetDomains"
 	GetDropletRequest                                           = "GetDroplet"
 	GetDropletsRequest                                          = "GetDroplets"
+	GetDropletBitsRequest                                       = "GetDropletBits"
 	GetEnvironmentVariableGroupRequest                          = "GetEnvironmentVariableGroup"
 	GetEventsRequest                                            = "GetEvents"
 	GetFeatureFlagRequest                                       = "GetFeatureFlag"
@@ -68,6 +70,7 @@ const (
 	GetPackagesRequest                                          = "GetPackages"
 	GetPackageDropletsRequest                                   = "GetPackageDroplets"
 	GetProcessRequest                                           = "GetProcess"
+	GetProcessesRequest                                         = "GetProcesses"
 	GetProcessStatsRequest                                      = "GetProcessStats"
 	GetProcessSidecarsRequest                                   = "GetProcessSidecars"
 	GetRolesRequest                                             = "GetRoles"
@@ -175,6 +178,7 @@ var APIRoutes = []Route{
 	{Resource: AppsResource, Path: "/:app_guid/processes/:type/actions/scale", Method: http.MethodPost, Name: PostApplicationProcessActionScaleRequest},
 	{Resource: AppsResource, Path: "/:app_guid/processes/:type/instances/:index", Method: http.MethodDelete, Name: DeleteApplicationProcessInstanceRequest},
 	{Resource: AppsResource, Path: "/:app_guid/relationships/current_droplet", Method: http.MethodPatch, Name: PatchApplicationCurrentDropletRequest},
+	{Resource: AppsResource, Path: "/:app_guid/revisions", Method: http.MethodGet, Name: GetApplicationRevisionsRequest},
 	{Resource: AppsResource, Path: "/:app_guid/routes", Method: http.MethodGet, Name: GetApplicationRoutesRequest},
 	{Resource: AppsResource, Path: "/:app_guid/ssh_enabled", Method: http.MethodGet, Name: GetSSHEnabled},
 	{Resource: AppsResource, Path: "/:app_guid/tasks", Method: http.MethodGet, Name: GetApplicationTasksRequest},
@@ -202,6 +206,7 @@ var APIRoutes = []Route{
 	{Resource: DropletsResource, Path: "/", Method: http.MethodPost, Name: PostDropletRequest},
 	{Resource: DropletsResource, Path: "/:droplet_guid", Method: http.MethodGet, Name: GetDropletRequest},
 	{Resource: DropletsResource, Path: "/:droplet_guid/upload", Method: http.MethodPost, Name: PostDropletBitsRequest},
+	{Resource: DropletsResource, Path: "/:droplet_guid/download", Method: http.MethodGet, Name: GetDropletBitsRequest},
 	{Resource: EnvironmentVariableGroupsResource, Path: "/:group_name", Method: http.MethodGet, Name: GetEnvironmentVariableGroupRequest},
 	{Resource: EnvironmentVariableGroupsResource, Path: "/:group_name", Method: http.MethodPatch, Name: PatchEnvironmentVariableGroupRequest},
 	{Resource: EventsResource, Path: "/", Method: http.MethodGet, Name: GetEventsRequest},
@@ -236,6 +241,7 @@ var APIRoutes = []Route{
 	{Resource: PackagesResource, Path: "/:package_guid/upload", Method: http.MethodPost, Name: PostPackageBitsRequest},
 	{Resource: PackagesResource, Path: "/:package_guid/droplets", Method: http.MethodGet, Name: GetPackageDropletsRequest},
 	{Resource: ProcessesResource, Path: "/:process_guid", Method: http.MethodGet, Name: GetProcessRequest},
+	{Resource: ProcessesResource, Path: "/", Method: http.MethodGet, Name: GetProcessesRequest},
 	{Resource: ProcessesResource, Path: "/:process_guid", Method: http.MethodPatch, Name: PatchProcessRequest},
 	{Resource: ProcessesResource, Path: "/:process_guid/stats", Method: http.MethodGet, Name: GetProcessStatsRequest},
 	{Resource: ProcessesResource, Path: "/:process_guid/sidecars", Method: http.MethodGet, Name: GetProcessSidecarsRequest},

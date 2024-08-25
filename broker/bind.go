@@ -5,18 +5,17 @@ import (
 	"fmt"
 
 	"github.com/cloudfoundry-community/go-uaa"
-	brokerapi "github.com/pivotal-cf/brokerapi/domain"
 	"github.com/cloudfoundry-community/scs-broker/broker/utilities"
+	brokerapi "github.com/pivotal-cf/brokerapi/domain"
 )
 
 func (broker *SCSBroker) Bind(ctx context.Context, instanceID, bindingID string, details brokerapi.BindDetails, asyncAllowed bool) (brokerapi.Binding, error) {
 	binding := brokerapi.Binding{}
 
-	broker.Logger.Info("Bind: GetUAAClient")
-
+	broker.Logger.Info("broker.Bind: broker.GetUAAClient()")
 	api, err := broker.GetUaaClient()
 	if err != nil {
-		broker.Logger.Info("Bind: Error in getting client")
+		broker.Logger.Error("broker.Bind broker.GetUaaClient()", err)
 		return binding, err
 	}
 
@@ -31,53 +30,49 @@ func (broker *SCSBroker) Bind(ctx context.Context, instanceID, bindingID string,
 		ClientSecret:         password,
 	}
 
-	broker.Logger.Info("Bind: got client info")
-	broker.Logger.Info("Bind: Create Client")
+	broker.Logger.Info("broker.Bind: api.CreateClient(")
 	_, err = api.CreateClient(client)
 	if err != nil {
-		broker.Logger.Info("Bind: Error in CreateClient")
+		broker.Logger.Error("broker.Bind api.CreateClient()", err)
 		return binding, err
 	}
 
-	broker.Logger.Info("Bind: GetClient")
+	broker.Logger.Info("broker.Bind: GetClient")
 	cfClient, err := broker.GetClient()
 	if err != nil {
-		broker.Logger.Info("Bind: Error in GetClient")
+		broker.Logger.Error("broker.Bind broker.GetClient()", err)
 		return binding, err
 	}
 
-	broker.Logger.Info("Bind: Get Info")
+	broker.Logger.Info("broker.Bind: Get Info")
 	info, _, _, err := cfClient.GetInfo()
 	if err != nil {
-		broker.Logger.Info("Bind: Error in Get Info")
-
+		broker.Logger.Error("broker.Bind cfClient.GetInfo()", err)
 		return binding, err
 	}
 
-	broker.Logger.Info("Bind: GetApplicationByNameAndSpace")
-
+	broker.Logger.Info("broker.Bind: cfClient.GetApplicationByNameAndSpace()")
 	app, _, err := cfClient.GetApplicationByNameAndSpace(utilities.MakeAppName(details.ServiceID, instanceID), broker.Config.InstanceSpaceGUID)
 	if err != nil {
-		broker.Logger.Info("Bind: Error in GetApplicationByNameAndSpace")
+		broker.Logger.Error("broker.Bind cfClient.GetApplicationByNameAndSpace()", err)
 		return binding, err
 	}
 
-	broker.Logger.Info("Bind: GetApplicationRoutes")
+	broker.Logger.Info("broker.Bind: GetApplicationRoutes")
 	routes, _, err := cfClient.GetApplicationRoutes(app.GUID)
 	if err != nil {
-		broker.Logger.Info("Bind: Error in GetApplicationRoutes")
+		broker.Logger.Error("broker.Bind cfClient.GetApplicationRoutes()", err)
 		return binding, err
 	}
 
-	broker.Logger.Info("Bind: Building binding Credentials")
+	broker.Logger.Info("broker.Bind: Building binding Credentials")
 	binding.Credentials = map[string]string{
 		"uri":              fmt.Sprintf("https://%v", routes[0].URL),
 		"access_token_uri": fmt.Sprintf("%v/oauth/token", info.UAA()),
 		"client_id":        clientId,
 		"client_secret":    password,
 	}
-
-	broker.Logger.Info("Bind: Return")
+	broker.Logger.Info("broker.Bind: Binding Complete, returning credentials.")
 
 	return binding, nil
 }

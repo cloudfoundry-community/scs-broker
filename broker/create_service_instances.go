@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 
-	brokerapi "github.com/pivotal-cf/brokerapi/domain"
 	scsccparser "github.com/cloudfoundry-community/spring-cloud-services-cli-config-parser"
+	brokerapi "github.com/pivotal-cf/brokerapi/domain"
 )
 
 func (broker *SCSBroker) CreateServiceInstances(ctx context.Context, instanceID string, details brokerapi.ProvisionDetails, asyncAllowed bool) error {
-	broker.Logger.Info(fmt.Sprintf("Starting thread for creating service application these details: %+v", details))
+	broker.Logger.Info(fmt.Sprintf("Starting goroutine for creating service application instance id: %s", instanceID))
 
 	go broker.startInstances(instanceID, details)
 
@@ -24,6 +24,7 @@ func (broker *SCSBroker) startInstances(instanceID string, details brokerapi.Pro
 	if len(raw) == 0 {
 		raw = []byte("{}")
 	}
+
 	mapparams, err := envsetup.ParseEnvironmentFromRaw(raw)
 	if err != nil {
 		return "", err
@@ -34,7 +35,6 @@ func (broker *SCSBroker) startInstances(instanceID string, details brokerapi.Pro
 		provisioner = broker.createRegistryServerInstance
 	case "config-server":
 		provisioner = broker.createConfigServerInstance
-
 	}
 
 	url, err := provisioner(details.ServiceID, instanceID, string(details.RawParameters), mapparams)

@@ -5,7 +5,7 @@ import (
 
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3"
 	"code.cloudfoundry.org/lager"
-	cf "github.com/cloudfoundry-community/go-cfclient"
+	cf "github.com/cloudfoundry-community/go-cfclient/v2"
 )
 
 func getProcessStatsByAppAndType(cfClient *ccv3.Client, community *cf.Client, logger lager.Logger, appGUID string, procType string) ([]cf.Stats, error) {

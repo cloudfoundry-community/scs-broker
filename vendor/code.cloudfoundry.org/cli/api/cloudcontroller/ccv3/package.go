@@ -12,6 +12,7 @@ import (
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccerror"
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/constant"
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/internal"
+	"code.cloudfoundry.org/cli/resources"
 )
 
 //go:generate counterfeiter io.Reader
@@ -37,7 +38,7 @@ type Package struct {
 	Links APILinks
 
 	// Relationships are a list of relationships to other resources.
-	Relationships Relationships
+	Relationships resources.Relationships
 
 	// State is the state of the package.
 	State constant.PackageState
@@ -54,13 +55,13 @@ func (p Package) MarshalJSON() ([]byte, error) {
 		Password string `json:"password,omitempty"`
 	}
 	var ccPackage struct {
-		GUID          string                `json:"guid,omitempty"`
-		CreatedAt     string                `json:"created_at,omitempty"`
-		Links         APILinks              `json:"links,omitempty"`
-		Relationships Relationships         `json:"relationships,omitempty"`
-		State         constant.PackageState `json:"state,omitempty"`
-		Type          constant.PackageType  `json:"type,omitempty"`
-		Data          *ccPackageData        `json:"data,omitempty"`
+		GUID          string                  `json:"guid,omitempty"`
+		CreatedAt     string                  `json:"created_at,omitempty"`
+		Links         APILinks                `json:"links,omitempty"`
+		Relationships resources.Relationships `json:"relationships,omitempty"`
+		State         constant.PackageState   `json:"state,omitempty"`
+		Type          constant.PackageType    `json:"type,omitempty"`
+		Data          *ccPackageData          `json:"data,omitempty"`
 	}
 
 	ccPackage.GUID = p.GUID
@@ -83,12 +84,12 @@ func (p Package) MarshalJSON() ([]byte, error) {
 // UnmarshalJSON helps unmarshal a Cloud Controller Package response.
 func (p *Package) UnmarshalJSON(data []byte) error {
 	var ccPackage struct {
-		GUID          string                `json:"guid,omitempty"`
-		CreatedAt     string                `json:"created_at,omitempty"`
-		Links         APILinks              `json:"links,omitempty"`
-		Relationships Relationships         `json:"relationships,omitempty"`
-		State         constant.PackageState `json:"state,omitempty"`
-		Type          constant.PackageType  `json:"type,omitempty"`
+		GUID          string                  `json:"guid,omitempty"`
+		CreatedAt     string                  `json:"created_at,omitempty"`
+		Links         APILinks                `json:"links,omitempty"`
+		Relationships resources.Relationships `json:"relationships,omitempty"`
+		State         constant.PackageState   `json:"state,omitempty"`
+		Type          constant.PackageType    `json:"type,omitempty"`
 		Data          struct {
 			Image    string `json:"image"`
 			Username string `json:"username"`
@@ -206,9 +207,9 @@ func (client *Client) CopyPackage(sourcePkgGUID string, targetAppGUID string) (P
 	_, warnings, err := client.MakeRequest(RequestParams{
 		RequestName: internal.PostPackageRequest,
 		Query:       []Query{{Key: SourceGUID, Values: []string{sourcePkgGUID}}},
-		RequestBody: map[string]Relationships{
+		RequestBody: map[string]resources.Relationships{
 			"relationships": {
-				constant.RelationshipTypeApplication: Relationship{GUID: targetAppGUID},
+				constant.RelationshipTypeApplication: resources.Relationship{GUID: targetAppGUID},
 			},
 		},
 		ResponseBody: &targetPackage,

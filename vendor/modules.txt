@@ -1,5 +1,5 @@
-# code.cloudfoundry.org/bytefmt v0.0.0-20200131002437-cf55d5288a48
-## explicit
+# code.cloudfoundry.org/bytefmt v0.3.0
+## explicit; go 1.20
 code.cloudfoundry.org/bytefmt
 # code.cloudfoundry.org/cfnetworking-cli-api v0.0.0-20190103195135-4b04f26287a6
 ## explicit
@@ -8,7 +8,7 @@ code.cloudfoundry.org/cfnetworking-cli-api/cfnetworking/cfnetv1
 code.cloudfoundry.org/cfnetworking-cli-api/cfnetworking/cfnetv1/internal
 code.cloudfoundry.org/cfnetworking-cli-api/cfnetworking/networkerror
 code.cloudfoundry.org/cfnetworking-cli-api/cfnetworking/wrapper
-# code.cloudfoundry.org/cli v6.51.0+incompatible
+# code.cloudfoundry.org/cli v7.1.0+incompatible
 ## explicit
 code.cloudfoundry.org/cli/actor/actionerror
 code.cloudfoundry.org/cli/api/cloudcontroller
@@ -19,7 +19,6 @@ code.cloudfoundry.org/cli/api/cloudcontroller/ccv2/internal
 code.cloudfoundry.org/cli/api/cloudcontroller/ccv3
 code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/constant
 code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/internal
-code.cloudfoundry.org/cli/api/cloudcontroller/jsonry
 code.cloudfoundry.org/cli/api/cloudcontroller/uploads
 code.cloudfoundry.org/cli/api/cloudcontroller/wrapper
 code.cloudfoundry.org/cli/api/plugin/pluginerror
@@ -41,13 +40,19 @@ code.cloudfoundry.org/cli/util/download
 code.cloudfoundry.org/cli/util/manifest
 code.cloudfoundry.org/cli/util/v6manifestparser
 code.cloudfoundry.org/cli/version
+# code.cloudfoundry.org/jsonry v1.1.4
+## explicit; go 1.16
+code.cloudfoundry.org/jsonry
+code.cloudfoundry.org/jsonry/internal/errorcontext
+code.cloudfoundry.org/jsonry/internal/path
+code.cloudfoundry.org/jsonry/internal/tree
 # code.cloudfoundry.org/lager v2.0.0+incompatible
 ## explicit
 code.cloudfoundry.org/lager
-# code.cloudfoundry.org/tlsconfig v0.0.0-20200131000646-bbe0f8da39b3
-## explicit; go 1.13
+# code.cloudfoundry.org/tlsconfig v0.1.0
+## explicit; go 1.21
 code.cloudfoundry.org/tlsconfig
-# github.com/Masterminds/semver v1.4.2
+# github.com/Masterminds/semver v1.5.0
 ## explicit
 github.com/Masterminds/semver
 # github.com/SermoDigital/jose v0.9.1 => github.com/SermoDigital/jose v0.9.2-0.20161205224733-f6df55f235c2
@@ -59,33 +64,33 @@ github.com/SermoDigital/jose/jwt
 # github.com/blang/semver v3.5.1+incompatible
 ## explicit
 github.com/blang/semver
-# github.com/bmatcuk/doublestar v1.3.1
+# github.com/bmatcuk/doublestar v1.3.4
 ## explicit; go 1.12
 github.com/bmatcuk/doublestar
-# github.com/bmizerany/pat v0.0.0-20170815010413-6226ea591a40
+# github.com/bmizerany/pat v0.0.0-20210406213842-e4b6760bdd6f
 ## explicit
 github.com/bmizerany/pat
-# github.com/charlievieth/fs v0.0.0-20170613215519-7dc373669fa1
-## explicit
+# github.com/charlievieth/fs v0.0.3
+## explicit; go 1.18
 github.com/charlievieth/fs
-# github.com/cloudfoundry-community/go-cf-clients-helper v1.0.1
+# github.com/cloudfoundry-community/go-cf-clients-helper v1.0.3
 ## explicit; go 1.13
 github.com/cloudfoundry-community/go-cf-clients-helper
-# github.com/cloudfoundry-community/go-cfclient v0.0.0-20220930021109-9c4e6c59ccf1
+# github.com/cloudfoundry-community/go-cfclient/v2 v2.0.0
 ## explicit; go 1.15
-github.com/cloudfoundry-community/go-cfclient
-# github.com/cloudfoundry-community/go-uaa v0.3.1
-## explicit; go 1.12
+github.com/cloudfoundry-community/go-cfclient/v2
+# github.com/cloudfoundry-community/go-uaa v0.3.3
+## explicit; go 1.20
 github.com/cloudfoundry-community/go-uaa
 github.com/cloudfoundry-community/go-uaa/passwordcredentials
 # github.com/cloudfoundry-community/spring-cloud-services-cli-config-parser v1.0.3
 ## explicit; go 1.20
 github.com/cloudfoundry-community/spring-cloud-services-cli-config-parser
-# github.com/cloudfoundry/bosh-cli v6.2.1+incompatible
+# github.com/cloudfoundry/bosh-cli v6.4.1+incompatible
 ## explicit
 github.com/cloudfoundry/bosh-cli/director/template
-# github.com/cloudfoundry/bosh-utils v0.0.0-20200606100138-7f673ba6be2a
-## explicit
+# github.com/cloudfoundry/bosh-utils v0.0.485
+## explicit; go 1.21.0
 github.com/cloudfoundry/bosh-utils/errors
 github.com/cloudfoundry/bosh-utils/logger
 github.com/cloudfoundry/bosh-utils/system
@@ -95,7 +100,7 @@ github.com/cloudfoundry/noaa
 github.com/cloudfoundry/noaa/consumer
 github.com/cloudfoundry/noaa/consumer/internal
 github.com/cloudfoundry/noaa/errors
-# github.com/cloudfoundry/sonde-go v0.0.0-20200416163440-a42463ba266b => github.com/cloudfoundry/sonde-go v0.0.0-20171206171820-b33733203bb4
+# github.com/cloudfoundry/sonde-go v0.0.0-20240807231527-361c7ad33dc7 => github.com/cloudfoundry/sonde-go v0.0.0-20171206171820-b33733203bb4
 ## explicit
 github.com/cloudfoundry/sonde-go/events
 # github.com/cppforlife/go-patch v0.2.0
@@ -108,22 +113,21 @@ github.com/cppforlife/go-patch/patch
 github.com/gogo/protobuf/gogoproto
 github.com/gogo/protobuf/proto
 github.com/gogo/protobuf/protoc-gen-gogo/descriptor
-# github.com/golang/protobuf v1.5.2
-## explicit; go 1.9
-github.com/golang/protobuf/proto
-# github.com/google/uuid v1.0.0
+# github.com/google/uuid v1.6.0
 ## explicit
 github.com/google/uuid
-# github.com/gorilla/mux v1.7.4
-## explicit; go 1.12
+# github.com/gorilla/mux v1.8.1
+## explicit; go 1.20
 github.com/gorilla/mux
-# github.com/gorilla/websocket v1.4.2
+# github.com/gorilla/websocket v1.5.3
 ## explicit; go 1.12
 github.com/gorilla/websocket
+# github.com/jessevdk/go-flags v1.6.1
+## explicit; go 1.20
+github.com/jessevdk/go-flags
 # github.com/konsorten/go-windows-terminal-sequences v1.0.3
 ## explicit
-github.com/konsorten/go-windows-terminal-sequences
-# github.com/mailru/easyjson v0.7.1 => github.com/mailru/easyjson v0.0.0-20180323154445-8b799c424f57
+# github.com/mailru/easyjson v0.7.7 => github.com/mailru/easyjson v0.0.0-20180323154445-8b799c424f57
 ## explicit
 github.com/mailru/easyjson
 github.com/mailru/easyjson/buffer
@@ -131,10 +135,14 @@ github.com/mailru/easyjson/jlexer
 github.com/mailru/easyjson/jwriter
 # github.com/mattn/go-colorable v0.1.11
 ## explicit; go 1.13
-# github.com/mattn/go-runewidth v0.0.9
+# github.com/mattn/go-runewidth v0.0.16
 ## explicit; go 1.9
 github.com/mattn/go-runewidth
-# github.com/pborman/uuid v1.2.0
+# github.com/moby/term v0.5.0
+## explicit; go 1.18
+# github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c
+## explicit; go 1.12
+# github.com/pborman/uuid v1.2.1
 ## explicit
 github.com/pborman/uuid
 # github.com/pivotal-cf/brokerapi v6.4.2+incompatible
@@ -149,72 +157,38 @@ github.com/pivotal-cf/brokerapi/utils
 # github.com/pkg/errors v0.9.1
 ## explicit
 github.com/pkg/errors
-# github.com/sirupsen/logrus v1.6.0
+# github.com/rivo/uniseg v0.4.7
+## explicit; go 1.18
+github.com/rivo/uniseg
+# github.com/sirupsen/logrus v1.9.3
 ## explicit; go 1.13
 github.com/sirupsen/logrus
-# github.com/stretchr/testify v1.7.0
-## explicit; go 1.13
+# github.com/stretchr/testify v1.9.0
+## explicit; go 1.17
 # github.com/tedsuo/rata v1.0.0
 ## explicit
 github.com/tedsuo/rata
-# golang.org/x/crypto v0.25.0
+# github.com/vito/go-interact v1.0.0
+## explicit; go 1.12
+# golang.org/x/crypto v0.26.0
 ## explicit; go 1.20
 golang.org/x/crypto/ssh/terminal
-# golang.org/x/net v0.27.0
+# golang.org/x/net v0.28.0
 ## explicit; go 1.18
 golang.org/x/net/context
-golang.org/x/net/context/ctxhttp
-# golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
-## explicit; go 1.11
+# golang.org/x/oauth2 v0.22.0
+## explicit; go 1.18
 golang.org/x/oauth2
 golang.org/x/oauth2/clientcredentials
 golang.org/x/oauth2/internal
-# golang.org/x/sys v0.22.0
+# golang.org/x/sys v0.24.0
 ## explicit; go 1.18
 golang.org/x/sys/plan9
 golang.org/x/sys/unix
 golang.org/x/sys/windows
-# golang.org/x/term v0.22.0
+# golang.org/x/term v0.23.0
 ## explicit; go 1.18
 golang.org/x/term
-# google.golang.org/appengine v1.6.1
-## explicit
-google.golang.org/appengine/internal
-google.golang.org/appengine/internal/base
-google.golang.org/appengine/internal/datastore
-google.golang.org/appengine/internal/log
-google.golang.org/appengine/internal/remote_api
-google.golang.org/appengine/internal/urlfetch
-google.golang.org/appengine/urlfetch
-# google.golang.org/protobuf v1.28.0
-## explicit; go 1.11
-google.golang.org/protobuf/encoding/prototext
-google.golang.org/protobuf/encoding/protowire
-google.golang.org/protobuf/internal/descfmt
-google.golang.org/protobuf/internal/descopts
-google.golang.org/protobuf/internal/detrand
-google.golang.org/protobuf/internal/encoding/defval
-google.golang.org/protobuf/internal/encoding/messageset
-google.golang.org/protobuf/internal/encoding/tag
-google.golang.org/protobuf/internal/encoding/text
-google.golang.org/protobuf/internal/errors
-google.golang.org/protobuf/internal/filedesc
-google.golang.org/protobuf/internal/filetype
-google.golang.org/protobuf/internal/flags
-google.golang.org/protobuf/internal/genid
-google.golang.org/protobuf/internal/impl
-google.golang.org/protobuf/internal/order
-google.golang.org/protobuf/internal/pragma
-google.golang.org/protobuf/internal/set
-google.golang.org/protobuf/internal/strs
-google.golang.org/protobuf/internal/version
-google.golang.org/protobuf/proto
-google.golang.org/protobuf/reflect/protodesc
-google.golang.org/protobuf/reflect/protoreflect
-google.golang.org/protobuf/reflect/protoregistry
-google.golang.org/protobuf/runtime/protoiface
-google.golang.org/protobuf/runtime/protoimpl
-google.golang.org/protobuf/types/descriptorpb
 # gopkg.in/cheggaaa/pb.v1 v1.0.28
 ## explicit
 gopkg.in/cheggaaa/pb.v1
