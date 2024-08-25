@@ -2,6 +2,7 @@ package broker
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3"
@@ -19,6 +20,7 @@ func (broker *SCSBroker) pollBuild(buildGUID string, appName string) (resources.
 
 	cfClient, err := broker.GetClient()
 	if err != nil {
+		broker.Logger.Error(fmt.Sprintf("broker.PollBuild %s: broker.GetClient()", appName), err)
 		return resources.Droplet{}, nil, errors.New("couldn't start session: " + err.Error())
 	}
 
@@ -28,10 +30,11 @@ func (broker *SCSBroker) pollBuild(buildGUID string, appName string) (resources.
 			build, warnings, err := cfClient.GetBuild(buildGUID)
 			allWarnings = append(allWarnings, warnings...)
 			if err != nil {
+				broker.Logger.Error(fmt.Sprintf("broker.PollBuild %s: cfClient.GetBuild()", appName), err)
 				return resources.Droplet{}, allWarnings, err
 			}
 
-			broker.Logger.Info("polling build final state:", lager.Data{
+			broker.Logger.Info(fmt.Sprintf("broker.PollBuild %s: polling build final state:", appName), lager.Data{
 				"package_guid": build.GUID,
 				"state":        build.State,
 			})
@@ -44,6 +47,7 @@ func (broker *SCSBroker) pollBuild(buildGUID string, appName string) (resources.
 				droplet, warnings, err := cfClient.GetDroplet(build.DropletGUID)
 				allWarnings = append(allWarnings, warnings...)
 				if err != nil {
+					broker.Logger.Error(fmt.Sprintf("broker.PollBuild %s: cfClient.GetDroplet()", appName), err)
 					return resources.Droplet{}, allWarnings, err
 				}
 

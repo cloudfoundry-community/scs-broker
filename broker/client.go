@@ -18,6 +18,7 @@ func (broker *SCSBroker) GetClient() (*ccv3.Client, error) {
 
 	session, err := clients.NewSession(config)
 	if err != nil {
+		broker.Logger.Error("broker.Client (go-cf-clients-helper) clients.NewSession()", err)
 		return nil, err
 	}
 	return session.V3(), err
@@ -38,15 +39,18 @@ func (broker *SCSBroker) GetUaaClient() (*uaa.API, error) {
 
 	cf, err := broker.GetClient()
 	if err != nil {
+		broker.Logger.Error("broker.Client broker.GetClient()", err)
 		return nil, err
 	}
 	info, _, _, err := cf.GetInfo()
 	if err != nil {
+		broker.Logger.Error("broker.Client (go-cfclient:) cf.GetClient()", err)
 		return nil, err
 	}
 
 	uaaClient, err := uaa.New(info.UAA(), uaa.WithClientCredentials(broker.Config.CfConfig.UaaClientID, broker.Config.CfConfig.UaaClientSecret, uaa.JSONWebToken), uaa.WithSkipSSLValidation(broker.Config.CfConfig.SkipSslValidation))
 	if err != nil {
+		broker.Logger.Error("broker.Client: uaa.New()", err)
 		return nil, err
 	}
 	return uaaClient, err

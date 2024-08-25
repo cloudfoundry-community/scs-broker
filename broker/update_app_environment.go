@@ -32,14 +32,13 @@ func (broker *SCSBroker) UpdateAppEnvironment(cfClient *ccv3.Client, app *resour
 			profiles = append(profiles, "vault")
 		}
 
-		if key == "SPRING_CLOUD_CONFIG_SERVER_COMPOSIT" {
-			profiles = append(profiles, "composit")
+		if key == "SPRING_CLOUD_CONFIG_SERVER_COMPOSITE" {
+			profiles = append(profiles, "composite")
 		}
 
 		if key == "SPRING_CLOUD_CONFIG_SERVER_CREDHUB" {
 			profiles = append(profiles, "credhub")
 		}
-
 	}
 
 	var profileString strings.Builder
@@ -67,6 +66,7 @@ func (broker *SCSBroker) UpdateAppEnvironment(cfClient *ccv3.Client, app *resour
 
 	_, _, err := cfClient.UpdateApplicationEnvironmentVariables(app.GUID, envVarToSet)
 	if err != nil {
+		broker.Logger.Error("broker.UpdateAppEnvironment: cfClient.UpdateApplicationEnvironmentVariables()", err)
 		return err
 	}
 

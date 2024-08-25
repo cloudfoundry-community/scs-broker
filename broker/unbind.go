@@ -4,29 +4,29 @@ import (
 	"context"
 	"fmt"
 
-	brokerapi "github.com/pivotal-cf/brokerapi/domain"
 	"github.com/cloudfoundry-community/scs-broker/broker/utilities"
+	brokerapi "github.com/pivotal-cf/brokerapi/domain"
 )
 
 func (broker *SCSBroker) Unbind(ctx context.Context, instanceID, bindingID string, details brokerapi.UnbindDetails, asyncAllowed bool) (brokerapi.UnbindSpec, error) {
 	unbind := brokerapi.UnbindSpec{}
 
-	broker.Logger.Info("UnBind: GetUAAClient")
+	broker.Logger.Info("broker.UnBind: GetUAAClient")
 	api, err := broker.GetUaaClient()
 	if err != nil {
-		broker.Logger.Info("UnBind: Error in GetUAAClient")
+		broker.Logger.Error("broker.UnBind: broker.GetUaaClient()", err)
 		return unbind, err
 	}
 
-	broker.Logger.Info("UnBind: makeClientIdForBinding")
+	broker.Logger.Info("broker.UnBind: makeClientIdForBinding")
 	clientId := utilities.MakeClientIdForBinding(details.ServiceID, bindingID)
 
-	broker.Logger.Info(fmt.Sprintf("UnBind: DeleteClient bindingID:%s clientid %s", bindingID, clientId))
+	broker.Logger.Info(fmt.Sprintf("broker.UnBind: DeleteClient bindingID:%s clientid %s", bindingID, clientId))
 	_, err = api.DeleteClient(clientId)
 	if err != nil {
-		broker.Logger.Error("UnBind: Error in DeleteClient - will attempt to remove anyway", err)
+		broker.Logger.Error("broker.UnBind: api.DeleteClient()", err)
 		return unbind, nil
 	}
-	broker.Logger.Info("UnBind: Return")
+	broker.Logger.Info("broker.UnBind: Return")
 	return unbind, nil
 }

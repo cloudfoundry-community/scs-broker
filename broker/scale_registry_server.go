@@ -15,8 +15,14 @@ func (broker *SCSBroker) scaleRegistryServer(cfClient *ccv3.Client, app *resourc
 	}
 
 	tentative, _, err := cfClient.CreateApplicationProcessScale(app.GUID, p)
+	if err != nil {
+		broker.Logger.Error("broker.ScaleRegistryServer: cfClient.CreateApplicationProcessScale()", err)
+	}
 
 	_, _, err = broker.pollScale(tentative, count)
+	if err != nil {
+		broker.Logger.Error("broker.ScaleRegistryServer: broker.pollScale()", err)
+	}
 
 	return err
 }

@@ -5,17 +5,16 @@ import (
 	"os"
 
 	"code.cloudfoundry.org/lager"
-	"github.com/pivotal-cf/brokerapi"
 	"github.com/cloudfoundry-community/scs-broker/broker"
 	"github.com/cloudfoundry-community/scs-broker/config"
 	"github.com/cloudfoundry-community/scs-broker/httpartifacttransport"
+	"github.com/pivotal-cf/brokerapi"
 )
 
 var brokerLogger lager.Logger
 var httpTransport httpartifacttransport.HttpArtifactTransport
 
 func main() {
-
 	brokerLogger = lager.NewLogger("scs-broker")
 	brokerLogger.RegisterSink(lager.NewWriterSink(os.Stdout, lager.DEBUG))
 	brokerLogger.RegisterSink(lager.NewWriterSink(os.Stderr, lager.ERROR))

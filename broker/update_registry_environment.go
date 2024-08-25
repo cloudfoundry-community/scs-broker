@@ -38,6 +38,7 @@ func (broker *SCSBroker) UpdateRegistryEnvironment(cfClient *ccv3.Client, app *r
 		}
 
 		if err != nil {
+			broker.Logger.Error("broker.UpdateRegistryEnvironment: cfClient.UpdateApplicationEnvironmentVariables()", err)
 			return err
 		}
 	}
@@ -53,6 +54,7 @@ func (broker *SCSBroker) UpdateRegistryEnvironment(cfClient *ccv3.Client, app *r
 
 	peers, err := json.Marshal(rc.Peers)
 	if err != nil {
+		broker.Logger.Error("broker.UpdateRegistryEnvironment: json.Marshal()", err)
 		return err
 	}
 
@@ -65,6 +67,7 @@ func (broker *SCSBroker) UpdateRegistryEnvironment(cfClient *ccv3.Client, app *r
 		"PEERING_MODE":           *types.NewFilteredString(rc.Mode),
 	})
 	if err != nil {
+		broker.Logger.Error("broker.UpdateRegistryEnvironment: cfClient.UpdateApplicationEnvironmentVariables()", err)
 		return err
 	}
 
