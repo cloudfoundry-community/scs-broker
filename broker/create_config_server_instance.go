@@ -17,37 +17,46 @@ func (broker *SCSBroker) createConfigServerInstance(serviceId string, instanceId
 	if err != nil {
 		return "", err
 	}
+	broker.Logger.Info(fmt.Sprintf("CS %s => Service: %v", instanceId, service))
+
 	cfClient, err := broker.GetClient()
 	if err != nil {
-		return "", errors.New("Couldn't start session: " + err.Error())
+		return "", errors.New(fmt.Sprintf("CS %s => Couldn't Start CF Client Session: %s", instanceId, err.Error()))
 	}
+
 	appName := utilities.MakeAppName(serviceId, instanceId)
 	spaceGUID := broker.Config.InstanceSpaceGUID
-	broker.Logger.Info("Creating Application")
+	buildpacks := []string{service.ServiceBuildpack}
 
-	app, _, err := cfClient.CreateApplication(
-		ccv3.Application{
-			Name:                appName,
-			LifecycleType:       constant.AppLifecycleTypeBuildpack,
-			LifecycleBuildpacks: []string{service.ServiceBuildpack},
-			State:               constant.ApplicationStopped,
-			Relationships: ccv3.Relationships{
-				constant.RelationshipTypeSpace: ccv3.Relationship{GUID: spaceGUID},
-			},
+	appConfig := ccv3.Application{
+		Name:                appName,
+		LifecycleType:       constant.AppLifecycleTypeBuildpack,
+		LifecycleBuildpacks: buildpacks,
+		State:               constant.ApplicationStopped,
+		Relationships: ccv3.Relationships{
+			constant.RelationshipTypeSpace: ccv3.Relationship{GUID: spaceGUID},
 		},
-	)
+	}
+	broker.Logger.Info(fmt.Sprintf("CS %s => Config Server ccv3.Application Config: %v", instanceId, appConfig))
+
+	broker.Logger.Info(fmt.Sprintf("CS %s => Creating Config Server Application: %s", instanceId, appName))
+	app, warn, err := cfClient.CreateApplication(appConfig)
 	if err != nil {
 		return "", err
 	}
+	if warn != nil {
+		broker.Logger.Info(fmt.Sprintf("WARN: %s", warn))
+	}
+	broker.Logger.Info(fmt.Sprintf("CS %s => App Created: %s as: %+v", instanceId, appName, app))
 
 	info, _, _, err := cfClient.GetInfo()
 	if err != nil {
 		return "", err
 	}
+	broker.Logger.Info(fmt.Sprintf("CS %s => cf Client Info: %+v", instanceId, info))
 
-	broker.Logger.Info("Updating Environment")
+	broker.Logger.Info(fmt.Sprintf("CS %s => Updating App Environment with jsonparams: %v and params: %v", instanceId, jsonparams, params))
 	err = broker.UpdateAppEnvironment(cfClient, &app, &info, serviceId, instanceId, jsonparams, params)
-
 	if err != nil {
 		return "", err
 	}
@@ -57,41 +66,40 @@ func (broker *SCSBroker) createConfigServerInstance(serviceId string, instanceId
 			"JBP_CONFIG_OPEN_JDK_JRE": {Value: broker.Config.JavaConfig.JBPConfigOpenJDKJRE, IsSet: true},
 		})
 		if err != nil {
-			return "", fmt.Errorf("failed to set JBP_CONFIG_OPEN_JDK_JRE: %v", err)
+			return "", fmt.Errorf("CS %s => failed to set JBP_CONFIG_OPEN_JDK_JRE: %v", instanceId, err)
 		}
 	}
 
-	broker.Logger.Info("Creating Package")
-	pkg, _, err := cfClient.CreatePackage(
-		ccv3.Package{
-			Type: constant.PackageTypeBits,
-			Relationships: ccv3.Relationships{
-				constant.RelationshipTypeApplication: ccv3.Relationship{GUID: app.GUID},
-			},
-		})
+	pkgConfig := ccv3.Package{
+		Type: constant.PackageTypeBits,
+		Relationships: ccv3.Relationships{
+			constant.RelationshipTypeApplication: ccv3.Relationship{GUID: app.GUID},
+		},
+	}
+	broker.Logger.Info(fmt.Sprintf("CS %s => Creating Package with config: %v", instanceId, pkgConfig))
+	pkg, _, err := cfClient.CreatePackage(pkgConfig)
 	if err != nil {
 		return "", err
 	}
 
-	broker.Logger.Info("Uploading Package")
+	broker.Logger.Info(fmt.Sprintf("CS %s => Uploading Package: %v", instanceId, pkg))
 
 	jarname := path.Base(service.ServiceDownloadURI)
 	artifact := broker.Config.ArtifactsDir + "/" + jarname
-
+	broker.Logger.Info(fmt.Sprintf("CS %s => looking for artifact: %s", instanceId, artifact))
 	fi, err := os.Stat(artifact)
 	if err != nil {
 		return "", err
 	}
 
-	broker.Logger.Info(fmt.Sprintf("Uploadinlsg: %s from %s size(%d)", fi.Name(), artifact, fi.Size()))
-
+	broker.Logger.Info(fmt.Sprintf("CS %s => Uploading: %s from %s size(%d)", instanceId, fi.Name(), artifact, fi.Size()))
 	upkg, uwarnings, err := cfClient.UploadPackage(pkg, artifact)
 	broker.showWarnings(uwarnings, upkg)
 	if err != nil {
 		return "", err
 	}
 
-	broker.Logger.Info("Polling Package")
+	broker.Logger.Info(fmt.Sprintf("CS %s => Polling Package", instanceId))
 	pkg, pwarnings, err := broker.pollPackage(pkg)
 	broker.showWarnings(pwarnings, pkg)
 	if err != nil {
@@ -99,21 +107,21 @@ func (broker *SCSBroker) createConfigServerInstance(serviceId string, instanceId
 		return "", err
 	}
 
-	broker.Logger.Info("Creating Build")
+	broker.Logger.Info(fmt.Sprintf("CS %s => Creating Build", instanceId))
 	build, cwarnings, err := cfClient.CreateBuild(ccv3.Build{PackageGUID: pkg.GUID})
 	broker.showWarnings(cwarnings, build)
 	if err != nil {
 		return "", err
 	}
 
-	broker.Logger.Info("polling build")
+	broker.Logger.Info(fmt.Sprintf("CS %s => Polling Build", instanceId))
 	droplet, pbwarnings, err := broker.pollBuild(build.GUID, appName)
 	broker.showWarnings(pbwarnings, droplet)
 	if err != nil {
 		return "", err
 	}
 
-	broker.Logger.Info("set application droplet")
+	broker.Logger.Info(fmt.Sprintf("CS %s => Set application droplet", instanceId))
 	_, _, err = cfClient.SetApplicationDroplet(app.GUID, droplet.GUID)
 	if err != nil {
 		return "", err
@@ -126,27 +134,31 @@ func (broker *SCSBroker) createConfigServerInstance(serviceId string, instanceId
 	}
 
 	if len(domains) == 0 {
-		return "", errors.New("no domains found for this instance")
+		return "", errors.New(fmt.Sprintf("CS %s => no domains found for this instance", instanceId))
 	}
 
-	route, _, err := cfClient.CreateRoute(ccv3.Route{
+	routeConfig := ccv3.Route{
 		SpaceGUID:  spaceGUID,
 		DomainGUID: domains[0].GUID,
 		Host:       appName,
-	})
+	}
+	broker.Logger.Info(fmt.Sprintf("CS %s => Creating Route: %v", instanceId, routeConfig))
+	route, _, err := cfClient.CreateRoute(routeConfig)
 	if err != nil {
 		return "", err
 	}
+	broker.Logger.Info(fmt.Sprintf("CS %s => Mapping Route", instanceId))
 	_, err = cfClient.MapRoute(route.GUID, app.GUID)
 	if err != nil {
 		return "", err
 	}
+	broker.Logger.Info(fmt.Sprintf("CS %s => Updating Application: Restart", instanceId))
 	app, _, err = cfClient.UpdateApplicationRestart(app.GUID)
 	if err != nil {
 		return "", err
 	}
 
-	broker.Logger.Info(route.URL)
+	broker.Logger.Info(fmt.Sprintf("CS %s => Route URL: %s", instanceId, route.URL))
 
 	return route.URL, nil
 }

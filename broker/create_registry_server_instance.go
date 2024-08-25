@@ -18,52 +18,59 @@ import (
 
 // jsonparams are the parameters passed in via the -c '{}' cf cli command line argument when creating the service instance.
 func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instanceId string, jsonparams string, params map[string]string) (string, error) {
+
 	service, err := broker.GetServiceByServiceID(serviceId)
 	if err != nil {
 		return "", err
 	}
+	broker.Logger.Info(fmt.Sprintf("RS %s => Service: %v", instanceId, service))
 
 	rc := utilities.NewRegistryConfig()
-	broker.Logger.Info("jsonparams == " + jsonparams)
 	rp, err := utilities.ExtractRegistryParams(jsonparams)
 	if err != nil {
 		return "", err
 	}
+	broker.Logger.Info(fmt.Sprintf("RS %s => Params: %v", instanceId, rp))
 
 	count, err := rp.Count()
 	if err != nil {
 		return "", err
 	}
+	broker.Logger.Info(fmt.Sprintf("RS %s => count: %s", instanceId, count))
 
 	cfClient, err := broker.GetClient()
 	if err != nil {
-		return "", errors.New("Couldn't start session: " + err.Error())
+		return "", errors.New(fmt.Sprintf("RS %s => Couldn't Start CF Client Session: %s", instanceId, err.Error()))
 	}
+
 	appName := utilities.MakeAppName(serviceId, instanceId)
 	spaceGUID := broker.Config.InstanceSpaceGUID
+	buildpacks := []string{service.ServiceBuildpack}
 
-	broker.Logger.Info("Creating Application")
-	app, _, err := cfClient.CreateApplication(
-		ccv3.Application{
-			Name:                appName,
-			LifecycleType:       constant.AppLifecycleTypeBuildpack,
-			LifecycleBuildpacks: []string{service.ServiceBuildpack},
-			State:               constant.ApplicationStopped,
-			Relationships: ccv3.Relationships{
-				constant.RelationshipTypeSpace: ccv3.Relationship{GUID: spaceGUID},
-			},
+	appConfig := ccv3.Application{
+		Name:                appName,
+		LifecycleType:       constant.AppLifecycleTypeBuildpack,
+		LifecycleBuildpacks: buildpacks,
+		State:               constant.ApplicationStopped,
+		Relationships: ccv3.Relationships{
+			constant.RelationshipTypeSpace: ccv3.Relationship{GUID: spaceGUID},
 		},
-	)
+	}
+	broker.Logger.Info(fmt.Sprintf("RS %s => ccv3.Application Config: %v", instanceId, appConfig))
+
+	broker.Logger.Info(fmt.Sprintf("RS %s => Creating Application: %s", instanceId, appName))
+	app, _, err := cfClient.CreateApplication(appConfig)
 	if err != nil {
 		return "", err
 	}
+	broker.Logger.Info(fmt.Sprintf("RS %s => Application Created: %s as: %+v", instanceId, appName, app))
 
 	info, _, _, err := cfClient.GetInfo()
 	if err != nil {
 		return "", err
 	}
 
-	broker.Logger.Info("Updating Environment")
+	broker.Logger.Info(fmt.Sprintf("RS %s => Updating App Environment with jsonparams: %v and params: %v", instanceId, jsonparams, params))
 	err = broker.UpdateAppEnvironment(cfClient, &app, &info, serviceId, instanceId, jsonparams, params)
 
 	if err != nil {
@@ -75,11 +82,11 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 			"JBP_CONFIG_OPEN_JDK_JRE": {Value: broker.Config.JavaConfig.JBPConfigOpenJDKJRE, IsSet: true},
 		})
 		if err != nil {
-			return "", fmt.Errorf("failed to set JBP_CONFIG_OPEN_JDK_JRE: %v", err)
+			return "", fmt.Errorf("RS %s => failed to set JBP_CONFIG_OPEN_JDK_JRE: %v", instanceId, err)
 		}
 	}
 
-	broker.Logger.Info("Creating Package")
+	broker.Logger.Info("RS %s => Creating Package")
 	pkg, _, err := cfClient.CreatePackage(
 		ccv3.Package{
 			Type: constant.PackageTypeBits,
@@ -91,7 +98,7 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 		return "", err
 	}
 
-	broker.Logger.Info("Uploading Package")
+	broker.Logger.Info(fmt.Sprintf("RS %s => Uploading Package", instanceId))
 
 	jarname := path.Base(service.ServiceDownloadURI)
 	artifact := broker.Config.ArtifactsDir + "/" + jarname
@@ -101,7 +108,7 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 		return "", err
 	}
 
-	broker.Logger.Info(fmt.Sprintf("Uploading: %s from %s size(%d)", fi.Name(), artifact, fi.Size()))
+	broker.Logger.Info(fmt.Sprintf("RS %s => Uploading: %s from %s size(%d)", instanceId, fi.Name(), artifact, fi.Size()))
 
 	upkg, uwarnings, err := cfClient.UploadPackage(pkg, artifact)
 	broker.showWarnings(uwarnings, upkg)
@@ -109,7 +116,7 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 		return "", err
 	}
 
-	broker.Logger.Info("Polling Package")
+	broker.Logger.Info(fmt.Sprintf("RS %s => Polling Package", instanceId))
 	pkg, pwarnings, err := broker.pollPackage(pkg)
 	broker.showWarnings(pwarnings, pkg)
 	if err != nil {
@@ -117,21 +124,21 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 		return "", err
 	}
 
-	broker.Logger.Info("Creating Build")
+	broker.Logger.Info(fmt.Sprintf("RS %s => Creating Build", instanceId))
 	build, cwarnings, err := cfClient.CreateBuild(ccv3.Build{PackageGUID: pkg.GUID})
 	broker.showWarnings(cwarnings, build)
 	if err != nil {
 		return "", err
 	}
 
-	broker.Logger.Info("polling build")
+	broker.Logger.Info(fmt.Sprintf("RS %s => polling build", instanceId))
 	droplet, pbwarnings, err := broker.pollBuild(build.GUID, appName)
 	broker.showWarnings(pbwarnings, droplet)
 	if err != nil {
 		return "", err
 	}
 
-	broker.Logger.Info("set application droplet")
+	broker.Logger.Info(fmt.Sprintf("RS %s => set application droplet", instanceId))
 	_, _, err = cfClient.SetApplicationDroplet(app.GUID, droplet.GUID)
 	if err != nil {
 		return "", err
@@ -144,7 +151,7 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 	}
 
 	if len(domains) == 0 {
-		return "", errors.New("no domains found for this instance")
+		return "", errors.New(fmt.Sprintf("RS %s => no domains found for this instance", instanceId))
 	}
 
 	route, _, err := cfClient.CreateRoute(ccv3.Route{
@@ -164,22 +171,22 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 
 	time.Sleep(time.Second)
 
-	broker.Logger.Info("Starting Application")
+	broker.Logger.Info(fmt.Sprintf("RS %s => Starting Application", instanceId))
 	app, _, err = cfClient.UpdateApplicationStart(app.GUID)
 	if err != nil {
-		broker.Logger.Info("Application Start Failed, Trying restart")
+		broker.Logger.Info(fmt.Sprintf("RS %s => Application Start Failed, Trying restart", instanceId))
 		app, _, err = cfClient.UpdateApplicationRestart(app.GUID)
 		if err != nil {
-			broker.Logger.Info("Application Start failed")
+			broker.Logger.Info(fmt.Sprintf("RS %s => Application Start failed", instanceId))
 			return "", err
 		}
 	}
 
-	broker.Logger.Info("handle node count")
+	broker.Logger.Info(fmt.Sprintf("RS => handling node count", instanceId))
 	// handle the node count
 	if count > 1 {
 		rc.Clustered()
-		broker.Logger.Info(fmt.Sprintf("scaling to %d", count))
+		broker.Logger.Info(fmt.Sprintf("RS %s => scaling to %d", instanceId, count))
 		err = broker.scaleRegistryServer(cfClient, &app, count)
 		if err != nil {
 			return "", err
@@ -203,20 +210,20 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 		rc.Standalone()
 	}
 
-	broker.Logger.Info("Updating Environment")
+	broker.Logger.Info(fmt.Sprintf("RS %s => Updating Environment", instanceId))
 	err = broker.UpdateRegistryEnvironment(cfClient, &app, &info, serviceId, instanceId, rc, params)
 
 	if err != nil {
 		return "", err
 	}
 
-	broker.Logger.Info("Starting Application")
+	broker.Logger.Info(fmt.Sprintf("RS %s => Starting Application", instanceId))
 	app, _, err = cfClient.UpdateApplicationStart(app.GUID)
 	if err != nil {
-		broker.Logger.Info("Application Start Failed, Trying restart")
+		broker.Logger.Info(fmt.Sprintf("RS %s => Application Start Failed, Trying restart", instanceId))
 		app, _, err = cfClient.UpdateApplicationRestart(app.GUID)
 		if err != nil {
-			broker.Logger.Info("Application Start failed")
+			broker.Logger.Info(fmt.Sprintf("RS %s => Application Start failed", instanceId))
 			return "", err
 		}
 	}
@@ -245,7 +252,7 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 	for _, peer := range rc.Peers {
 		req, err := http.NewRequest(http.MethodPost, "https://"+route.URL+"/config/peers", bytes.NewBuffer(peers))
 		if err != nil {
-			fmt.Printf("client: could not create request: %s\n", err)
+			fmt.Printf("RS client: could not create request: %s\n", err)
 
 		}
 		req.Header.Set("Content-Type", "application/json")
@@ -253,7 +260,7 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 
 		refreshreq, err := http.NewRequest(http.MethodPost, "https://"+route.URL+"/actuator/refresh", nil)
 		if err != nil {
-			fmt.Printf("client: could not create request: %s\n", err)
+			fmt.Printf("RS client: could not create request: %s\n", err)
 
 		}
 		refreshreq.Header.Set("Content-Type", "application/json")
@@ -265,7 +272,7 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 
 		res, err := client.Do(req)
 		if err != nil {
-			fmt.Printf("client: error making http request: %s\n", err)
+			fmt.Printf("RS client: error making http request: %s\n", err)
 		}
 		broker.Logger.Info(res.Request.RequestURI)
 		broker.Logger.Info(string(peers))
@@ -273,7 +280,7 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 
 		refreshres, err := client.Do(refreshreq)
 		if err != nil {
-			fmt.Printf("client: error making http request: %s\n", err)
+			fmt.Printf("RS client: error making http request: %s\n", err)
 		}
 		broker.Logger.Info(refreshres.Request.RequestURI)
 		broker.Logger.Info(string(peers))
@@ -283,15 +290,15 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 
 	broker.Logger.Info(route.URL)
 
-	sucessfulStart, err := broker.MonitorApplicationStartup(cfClient, community, broker.Logger, app.GUID)
-	if err != nil || !sucessfulStart {
-		broker.Logger.Info("Crashed application retarting...")
+	successfulStart, err := broker.MonitorApplicationStartup(cfClient, community, broker.Logger, app.GUID)
+	if err != nil || !successfulStart {
+		broker.Logger.Info(fmt.Sprintf("RS %s => Crashed application restarting...", instanceId))
 		app, _, err = cfClient.UpdateApplicationStart(app.GUID)
 		if err != nil {
-			broker.Logger.Info("Application Start Failed, Trying restart")
+			broker.Logger.Info(fmt.Sprintf("RS %s => Application Start Failed, Trying restart", instanceId))
 			app, _, err = cfClient.UpdateApplicationRestart(app.GUID)
 			if err != nil {
-				broker.Logger.Info("Application Start failed")
+				broker.Logger.Info(fmt.Sprintf("RS %s => Application Start failed", instanceId))
 				return "", err
 			}
 		}
