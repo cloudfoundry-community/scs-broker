@@ -44,6 +44,7 @@ type Service struct {
 	ServiceDescription string `yaml:"service_description"`
 	ServiceDownloadURI string `yaml:"service_download_uri"`
 	ServiceBuildpack   string `yaml:"service_buildpack"`
+	ServiceStack       string `yaml:"service_stack"`
 }
 
 type CfConfig struct {
