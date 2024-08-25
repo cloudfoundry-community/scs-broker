@@ -3,7 +3,7 @@ package broker
 import (
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3"
 	clients "github.com/cloudfoundry-community/go-cf-clients-helper"
-	cf "github.com/cloudfoundry-community/go-cfclient"
+	cf "github.com/cloudfoundry-community/go-cfclient/v2"
 	"github.com/cloudfoundry-community/go-uaa"
 )
 

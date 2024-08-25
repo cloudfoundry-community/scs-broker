@@ -5,7 +5,7 @@ import (
 
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3"
 	"code.cloudfoundry.org/lager"
-	"github.com/cloudfoundry-community/go-cfclient"
+	"github.com/cloudfoundry-community/go-cfclient/v2"
 )
 
 func (broker *SCSBroker) MonitorApplicationStartup(cfClient *ccv3.Client, community *cfclient.Client, logger lager.Logger, appGUID string) (bool, error) {
