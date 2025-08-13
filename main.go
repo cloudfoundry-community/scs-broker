@@ -1,20 +1,31 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"net/http"
 	"os"
 
 	"code.cloudfoundry.org/lager"
 	"github.com/cloudfoundry-community/scs-broker/broker"
 	"github.com/cloudfoundry-community/scs-broker/config"
-	"github.com/cloudfoundry-community/scs-broker/httpartifacttransport"
 	"github.com/pivotal-cf/brokerapi"
 )
 
 var brokerLogger lager.Logger
-var httpTransport httpartifacttransport.HttpArtifactTransport
+// (legacy) httpTransport removed; add back if artifact transport needed in future
+
+// Version is overridden at build time via: -ldflags "-X main.Version=1.1.3"
+var Version = "dev"
 
 func main() {
+	showVersion := flag.Bool("version", false, "print version and exit")
+	flag.Parse()
+
+	if *showVersion {
+		fmt.Println(Version)
+		return
+	}
 	brokerLogger = lager.NewLogger("scs-broker")
 	brokerLogger.RegisterSink(lager.NewWriterSink(os.Stdout, lager.DEBUG))
 	brokerLogger.RegisterSink(lager.NewWriterSink(os.Stderr, lager.ERROR))
@@ -26,7 +37,7 @@ func main() {
 		})
 	}
 
-	brokerLogger.Info("starting")
+	brokerLogger.Info("starting", lager.Data{"version": Version})
 
 	serviceBroker := &broker.SCSBroker{
 		Config: brokerConf,
