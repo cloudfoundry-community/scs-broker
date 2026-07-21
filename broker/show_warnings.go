@@ -3,8 +3,8 @@ package broker
 import (
 	"fmt"
 
-	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3"
-	"code.cloudfoundry.org/lager"
+	"code.cloudfoundry.org/cli/v8/api/cloudcontroller/ccv3"
+	"code.cloudfoundry.org/lager/v3"
 )
 
 func (broker *SCSBroker) showWarnings(warnings ccv3.Warnings, subject interface{}) {

@@ -3,9 +3,9 @@ package broker
 import (
 	"context"
 
-	"code.cloudfoundry.org/cli/api/cloudcontroller/ccerror"
+	brokerapi "code.cloudfoundry.org/brokerapi/v13/domain"
+	"code.cloudfoundry.org/cli/v8/api/cloudcontroller/ccerror"
 	"github.com/cloudfoundry-community/scs-broker/broker/utilities"
-	brokerapi "github.com/pivotal-cf/brokerapi/domain"
 )
 
 func (broker *SCSBroker) Deprovision(ctx context.Context, instanceID string, details brokerapi.DeprovisionDetails, asyncAllowed bool) (brokerapi.DeprovisionServiceSpec, error) {

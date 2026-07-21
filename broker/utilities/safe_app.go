@@ -1,6 +1,6 @@
 package utilities
 
-import "code.cloudfoundry.org/cli/resources"
+import "code.cloudfoundry.org/cli/v8/resources"
 
 func SafeApp(app resources.Application) resources.Application {
 	return resources.Application{

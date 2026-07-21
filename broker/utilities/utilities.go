@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	brokerapi "github.com/pivotal-cf/brokerapi/domain"
+	brokerapi "code.cloudfoundry.org/brokerapi/v13/domain"
 )
 
 const (

@@ -2,11 +2,13 @@ package broker
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
+	brokerapi "code.cloudfoundry.org/brokerapi/v13/domain"
+	"code.cloudfoundry.org/cli/v8/resources"
 	"github.com/cloudfoundry-community/go-uaa"
 	"github.com/cloudfoundry-community/scs-broker/broker/utilities"
-	brokerapi "github.com/pivotal-cf/brokerapi/domain"
 )
 
 func (broker *SCSBroker) Bind(ctx context.Context, instanceID, bindingID string, details brokerapi.BindDetails, asyncAllowed bool) (brokerapi.Binding, error) {
@@ -45,9 +47,9 @@ func (broker *SCSBroker) Bind(ctx context.Context, instanceID, bindingID string,
 	}
 
 	broker.Logger.Info("broker.Bind: Get Info")
-	info, _, _, err := cfClient.GetInfo()
+	info, _, err := cfClient.GetRoot()
 	if err != nil {
-		broker.Logger.Error("broker.Bind cfClient.GetInfo()", err)
+		broker.Logger.Error("broker.Bind cfClient.GetRoot()", err)
 		return binding, err
 	}
 
@@ -66,13 +68,30 @@ func (broker *SCSBroker) Bind(ctx context.Context, instanceID, bindingID string,
 	}
 
 	broker.Logger.Info("broker.Bind: Building binding Credentials")
-	binding.Credentials = map[string]string{
-		"uri":              fmt.Sprintf("https://%v", routes[0].URL),
-		"access_token_uri": fmt.Sprintf("%v/oauth/token", info.UAA()),
-		"client_id":        clientId,
-		"client_secret":    password,
+	creds, err := buildBindingCredentials(routes, info.UAA(), clientId, password)
+	if err != nil {
+		broker.Logger.Error("broker.Bind buildBindingCredentials()", err)
+		return binding, err
 	}
+	binding.Credentials = creds
 	broker.Logger.Info("broker.Bind: Binding Complete, returning credentials.")
 
 	return binding, nil
+}
+
+// buildBindingCredentials assembles the OSB binding credentials from the
+// backing app's routes. A backing app that failed to stage has no route, so the
+// route slice is checked before indexing: without this guard Bind panics and
+// the CC sees a 502 instead of a usable error (plan decision D4).
+func buildBindingCredentials(routes []resources.Route, uaaURL, clientID, password string) (map[string]string, error) {
+	if len(routes) == 0 {
+		return nil, errors.New("service instance backing app has no route; it may have failed to stage")
+	}
+
+	return map[string]string{
+		"uri":              fmt.Sprintf("https://%v", routes[0].URL),
+		"access_token_uri": fmt.Sprintf("%v/oauth/token", uaaURL),
+		"client_id":        clientID,
+		"client_secret":    password,
+	}, nil
 }

@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 
-	"code.cloudfoundry.org/lager"
+	brokerapi "code.cloudfoundry.org/brokerapi/v13/domain"
+	"code.cloudfoundry.org/lager/v3"
 	"github.com/cloudfoundry-community/scs-broker/broker/utilities"
 	scsccparser "github.com/cloudfoundry-community/spring-cloud-services-cli-config-parser"
-	brokerapi "github.com/pivotal-cf/brokerapi/domain"
 )
 
 func (broker *SCSBroker) updateConfigServerInstance(cxt context.Context, instanceID string, details brokerapi.UpdateDetails, asyncAllowed bool) (brokerapi.UpdateServiceSpec, error) {
@@ -24,9 +24,9 @@ func (broker *SCSBroker) updateConfigServerInstance(cxt context.Context, instanc
 		return spec, errors.New("Couldn't start session: " + err.Error())
 	}
 
-	info, _, _, err := cfClient.GetInfo()
+	info, _, err := cfClient.GetRoot()
 	if err != nil {
-		broker.Logger.Error("broker.UpdateConfigServerInstance: cfClient.GetInfo()", err)
+		broker.Logger.Error("broker.UpdateConfigServerInstance: cfClient.GetRoot()", err)
 		return spec, err
 	}
 

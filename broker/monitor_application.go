@@ -1,13 +1,14 @@
 package broker
 
 import (
+	"context"
 	"time"
 
-	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3"
-	"github.com/cloudfoundry-community/go-cfclient/v2"
+	"code.cloudfoundry.org/cli/v8/api/cloudcontroller/ccv3"
+	cfclient "github.com/cloudfoundry/go-cfclient/v3/client"
 )
 
-func (broker *SCSBroker) MonitorApplicationStartup(cfClient *ccv3.Client, community *cfclient.Client, appGUID string) (bool, error) {
+func (broker *SCSBroker) MonitorApplicationStartup(ctx context.Context, cfClient *ccv3.Client, community *cfclient.Client, appGUID string) (bool, error) {
 
 	waittime := 30
 	timepassed := 0
@@ -15,7 +16,7 @@ func (broker *SCSBroker) MonitorApplicationStartup(cfClient *ccv3.Client, commun
 	for timepassed < waittime {
 		time.Sleep(time.Second)
 		timepassed += 1
-		successStart, err := broker.checkApplicationStatus(cfClient, community, appGUID)
+		successStart, err := broker.checkApplicationStatus(ctx, cfClient, community, appGUID)
 		if err != nil {
 			return false, err
 		}
@@ -28,8 +29,8 @@ func (broker *SCSBroker) MonitorApplicationStartup(cfClient *ccv3.Client, commun
 
 }
 
-func (broker *SCSBroker) checkApplicationStatus(cfClient *ccv3.Client, community *cfclient.Client, appGUID string) (bool, error) {
-	stats, err := getProcessStatsByAppAndType(cfClient, community, broker.Logger, appGUID, "web")
+func (broker *SCSBroker) checkApplicationStatus(ctx context.Context, cfClient *ccv3.Client, community *cfclient.Client, appGUID string) (bool, error) {
+	stats, err := getProcessStatsByAppAndType(ctx, cfClient, community, broker.Logger, appGUID, "web")
 	if err != nil {
 		broker.Logger.Error("broker.MonitorApplication: getProcessStatsByAppAndType()", err)
 		return false, err

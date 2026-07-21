@@ -1,10 +1,11 @@
 package broker
 
 import (
-	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3"
-	clients "github.com/cloudfoundry-community/go-cf-clients-helper"
-	cf "github.com/cloudfoundry-community/go-cfclient/v2"
+	"code.cloudfoundry.org/cli/v8/api/cloudcontroller/ccv3"
+	clients "github.com/cloudfoundry-community/go-cf-clients-helper/v2"
 	"github.com/cloudfoundry-community/go-uaa"
+	cfclient "github.com/cloudfoundry/go-cfclient/v3/client"
+	cfconfig "github.com/cloudfoundry/go-cfclient/v3/config"
 )
 
 func (broker *SCSBroker) GetClient() (*ccv3.Client, error) {
@@ -24,15 +25,21 @@ func (broker *SCSBroker) GetClient() (*ccv3.Client, error) {
 	return session.V3(), err
 }
 
-func (broker *SCSBroker) GetCommunity() (*cf.Client, error) {
-	config := &cf.Config{
-		ApiAddress:        broker.Config.CfConfig.ApiUrl,
-		SkipSslValidation: broker.Config.CfConfig.SkipSslValidation,
-		Username:          broker.Config.CfConfig.CfUsername,
-		Password:          broker.Config.CfConfig.CfPassword,
+func (broker *SCSBroker) GetCommunity() (*cfclient.Client, error) {
+	opts := []cfconfig.Option{
+		cfconfig.UserPassword(broker.Config.CfConfig.CfUsername, broker.Config.CfConfig.CfPassword),
+	}
+	if broker.Config.CfConfig.SkipSslValidation {
+		opts = append(opts, cfconfig.SkipTLSValidation())
 	}
 
-	return cf.NewClient(config)
+	cfg, err := cfconfig.New(broker.Config.CfConfig.ApiUrl, opts...)
+	if err != nil {
+		broker.Logger.Error("broker.GetCommunity (go-cfclient/v3) config.New()", err)
+		return nil, err
+	}
+
+	return cfclient.New(cfg)
 }
 
 func (broker *SCSBroker) GetUaaClient() (*uaa.API, error) {
@@ -42,7 +49,7 @@ func (broker *SCSBroker) GetUaaClient() (*uaa.API, error) {
 		broker.Logger.Error("broker.Client broker.GetClient()", err)
 		return nil, err
 	}
-	info, _, _, err := cf.GetInfo()
+	info, _, err := cf.GetRoot()
 	if err != nil {
 		broker.Logger.Error("broker.Client (go-cfclient:) cf.GetClient()", err)
 		return nil, err
