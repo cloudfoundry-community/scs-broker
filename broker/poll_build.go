@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"time"
 
-	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3"
-	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/constant"
-	"code.cloudfoundry.org/cli/resources"
-	"code.cloudfoundry.org/cli/util/configv3"
-	"code.cloudfoundry.org/lager"
+	"code.cloudfoundry.org/cli/v8/api/cloudcontroller/ccv3"
+	"code.cloudfoundry.org/cli/v8/api/cloudcontroller/ccv3/constant"
+	"code.cloudfoundry.org/cli/v8/resources"
+	"code.cloudfoundry.org/cli/v8/util/configv3"
+	"code.cloudfoundry.org/lager/v3"
 )
 
 func (broker *SCSBroker) pollBuild(buildGUID string, appName string) (resources.Droplet, ccv3.Warnings, error) {

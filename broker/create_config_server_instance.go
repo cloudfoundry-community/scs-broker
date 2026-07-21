@@ -6,9 +6,9 @@ import (
 	"os"
 	"path"
 
-	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3"
-	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/constant"
-	"code.cloudfoundry.org/cli/resources"
+	"code.cloudfoundry.org/cli/v8/api/cloudcontroller/ccv3"
+	"code.cloudfoundry.org/cli/v8/api/cloudcontroller/ccv3/constant"
+	"code.cloudfoundry.org/cli/v8/resources"
 	"github.com/cloudfoundry-community/scs-broker/broker/utilities"
 )
 
@@ -41,7 +41,7 @@ func (broker *SCSBroker) createConfigServerInstance(serviceId string, instanceId
 		State:               constant.ApplicationStopped,
 		SpaceGUID:           spaceGUID,
 	}
-	broker.Logger.Info(fmt.Sprintf("CCS %v => Config Server ccv3.Application Config: %+v", appName, appConfig))
+	broker.Logger.Info(fmt.Sprintf("CCS %v => Config Server resources.Application Config: %+v", appName, appConfig))
 
 	broker.Logger.Info(fmt.Sprintf("CCS %v => Creating Config Server Application: %s", appName, appName))
 	app, warn, err := cfClient.CreateApplication(appConfig)
@@ -54,9 +54,9 @@ func (broker *SCSBroker) createConfigServerInstance(serviceId string, instanceId
 	}
 	broker.Logger.Info(fmt.Sprintf("CCS %v => App Created as: %+v", appName, app))
 
-	info, _, _, err := cfClient.GetInfo()
+	info, _, err := cfClient.GetRoot()
 	if err != nil {
-		broker.Logger.Error(fmt.Sprintf("CCS %v => ERROR from cfClient.GetInfo()", appName), err)
+		broker.Logger.Error(fmt.Sprintf("CCS %v => ERROR from cfClient.GetRoot()", appName), err)
 		return "", err
 	}
 	broker.Logger.Info(fmt.Sprintf("CCS %v => cf Client Info: %+v", appName, info))
@@ -69,7 +69,7 @@ func (broker *SCSBroker) createConfigServerInstance(serviceId string, instanceId
 	}
 
 	if broker.Config.JavaConfig.JBPConfigOpenJDKJRE != "" {
-		_, _, err = cfClient.UpdateApplicationEnvironmentVariables(app.GUID, ccv3.EnvironmentVariables{
+		_, _, err = cfClient.UpdateApplicationEnvironmentVariables(app.GUID, resources.EnvironmentVariables{
 			"JBP_CONFIG_OPEN_JDK_JRE": {Value: broker.Config.JavaConfig.JBPConfigOpenJDKJRE, IsSet: true},
 		})
 		if err != nil {
@@ -78,7 +78,7 @@ func (broker *SCSBroker) createConfigServerInstance(serviceId string, instanceId
 		}
 	}
 
-	pkgConfig := ccv3.Package{
+	pkgConfig := resources.Package{
 		Type: constant.PackageTypeBits,
 		Relationships: resources.Relationships{
 			constant.RelationshipTypeApplication: resources.Relationship{GUID: app.GUID},
@@ -119,7 +119,7 @@ func (broker *SCSBroker) createConfigServerInstance(serviceId string, instanceId
 	}
 
 	broker.Logger.Info(fmt.Sprintf("CCS %v => Creating Build", appName))
-	build, cwarnings, err := cfClient.CreateBuild(ccv3.Build{PackageGUID: pkg.GUID})
+	build, cwarnings, err := cfClient.CreateBuild(resources.Build{PackageGUID: pkg.GUID})
 	broker.showWarnings(cwarnings, build)
 	if err != nil {
 		broker.Logger.Error(fmt.Sprintf("CCS %v => ERROR from cfClient.CreateBuild()", appName), err)
@@ -167,7 +167,7 @@ func (broker *SCSBroker) createConfigServerInstance(serviceId string, instanceId
 	}
 
 	broker.Logger.Info(fmt.Sprintf("CCS %v => Mapping Route", appName))
-	_, err = cfClient.MapRoute(route.GUID, app.GUID)
+	_, err = cfClient.MapRoute(route.GUID, app.GUID, "", 0)
 	if err != nil {
 		broker.Logger.Error(fmt.Sprintf("CCS %v => ERROR from cfClient.MapRoute()", appName), err)
 		return "", err

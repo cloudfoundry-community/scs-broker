@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"code.cloudfoundry.org/lager"
-	brokerapi "github.com/pivotal-cf/brokerapi/domain"
+	brokerapi "code.cloudfoundry.org/brokerapi/v13/domain"
+	"code.cloudfoundry.org/lager/v3"
 	"github.com/cloudfoundry-community/scs-broker/config"
 )
 

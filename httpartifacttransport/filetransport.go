@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"code.cloudfoundry.org/lager"
+	"code.cloudfoundry.org/lager/v3"
 	"github.com/cloudfoundry-community/scs-broker/broker"
 	"github.com/cloudfoundry-community/scs-broker/config"
 )

@@ -3,16 +3,18 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"os"
 
-	"code.cloudfoundry.org/lager"
+	"code.cloudfoundry.org/brokerapi/v13"
+	"code.cloudfoundry.org/lager/v3"
 	"github.com/cloudfoundry-community/scs-broker/broker"
 	"github.com/cloudfoundry-community/scs-broker/config"
-	"github.com/pivotal-cf/brokerapi"
 )
 
 var brokerLogger lager.Logger
+
 // (legacy) httpTransport removed; add back if artifact transport needed in future
 
 // Version is overridden at build time via: -ldflags "-X main.Version=1.1.3"
@@ -49,7 +51,9 @@ func main() {
 		Password: brokerConf.Auth.Password,
 	}
 
-	brokerAPI := brokerapi.New(serviceBroker, brokerLogger, brokerCredentials)
+	// brokerapi v11+ takes a *slog.Logger; bridge the lager logger through
+	// lager/v3's slog.Handler so broker-internal logging stays lager-native.
+	brokerAPI := brokerapi.New(serviceBroker, slog.New(lager.NewHandler(brokerLogger)), brokerCredentials)
 	http.Handle("/", brokerAPI)
 
 	port := os.Getenv("PORT")

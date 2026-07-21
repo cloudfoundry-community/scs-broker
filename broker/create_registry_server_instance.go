@@ -2,6 +2,7 @@ package broker
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -11,9 +12,9 @@ import (
 	"strconv"
 	"time"
 
-	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3"
-	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/constant"
-	"code.cloudfoundry.org/cli/resources"
+	"code.cloudfoundry.org/cli/v8/api/cloudcontroller/ccv3"
+	"code.cloudfoundry.org/cli/v8/api/cloudcontroller/ccv3/constant"
+	"code.cloudfoundry.org/cli/v8/resources"
 	"github.com/cloudfoundry-community/scs-broker/broker/utilities"
 )
 
@@ -71,9 +72,9 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 	}
 	broker.Logger.Info(fmt.Sprintf("CRS %v => Application Created: %s as: %+v", appName, appName, app))
 
-	info, _, _, err := cfClient.GetInfo()
+	info, _, err := cfClient.GetRoot()
 	if err != nil {
-		broker.Logger.Error(fmt.Sprintf("CRS %v => ERROR from cfClient.GetInfo()", appName), err)
+		broker.Logger.Error(fmt.Sprintf("CRS %v => ERROR from cfClient.GetRoot()", appName), err)
 		return "", err
 	}
 	if warn != nil {
@@ -89,7 +90,7 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 	}
 
 	if broker.Config.JavaConfig.JBPConfigOpenJDKJRE != "" {
-		_, _, err = cfClient.UpdateApplicationEnvironmentVariables(app.GUID, ccv3.EnvironmentVariables{
+		_, _, err = cfClient.UpdateApplicationEnvironmentVariables(app.GUID, resources.EnvironmentVariables{
 			"JBP_CONFIG_OPEN_JDK_JRE": {Value: broker.Config.JavaConfig.JBPConfigOpenJDKJRE, IsSet: true},
 		})
 		if err != nil {
@@ -98,7 +99,7 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 		}
 	}
 
-	pkgConfig := ccv3.Package{
+	pkgConfig := resources.Package{
 		Type: constant.PackageTypeBits,
 		Relationships: resources.Relationships{
 			constant.RelationshipTypeApplication: resources.Relationship{GUID: app.GUID},
@@ -139,7 +140,7 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 	}
 
 	broker.Logger.Info(fmt.Sprintf("CRS %v => Creating Build", appName))
-	build, cwarnings, err := cfClient.CreateBuild(ccv3.Build{PackageGUID: pkg.GUID})
+	build, cwarnings, err := cfClient.CreateBuild(resources.Build{PackageGUID: pkg.GUID})
 	broker.showWarnings(cwarnings, build)
 	if err != nil {
 		broker.Logger.Error(fmt.Sprintf("CRS %v => ERROR from broker.CreateBuild()", appName), err)
@@ -187,7 +188,7 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 	}
 
 	broker.Logger.Info(fmt.Sprintf("CRS %v => Mapping Route cfClient.MapRoute(route.GUID,app.GUI)", appName))
-	_, err = cfClient.MapRoute(route.GUID, app.GUID)
+	_, err = cfClient.MapRoute(route.GUID, app.GUID, "", 0)
 	if err != nil {
 		broker.Logger.Error(fmt.Sprintf("CRS %v => ERROR from cfClient.MapRoute(%v,%v)", appName, route.GUID, app.GUID), err)
 		return "", err
@@ -223,14 +224,14 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 			return "", err
 		}
 
-		stats, err := getProcessStatsByAppAndType(cfClient, community, broker.Logger, app.GUID, "web")
+		stats, err := getProcessStatsByAppAndType(context.Background(), cfClient, community, broker.Logger, app.GUID, "web")
 		if err != nil {
 			broker.Logger.Error(fmt.Sprintf("CRS %v => ERROR from getProcessStatsByAppAndType()", appName), err)
 			return "", nil
 		}
 
 		for _, stat := range stats {
-			rc.AddPeer(stat.Index, fmt.Sprintf("http://%s:%d/eureka", stat.Host, stat.InstancePorts[0].External), serviceId)
+			rc.AddPeer(stat.Index, fmt.Sprintf("http://%s:%d/eureka", stat.Host, stat.InstancePorts[0]["external"]), serviceId)
 		}
 	} else {
 		rc.Standalone()
@@ -261,14 +262,14 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 	}
 
 	if count > 1 {
-		stats, err := getProcessStatsByAppAndType(cfClient, community, broker.Logger, app.GUID, "web")
+		stats, err := getProcessStatsByAppAndType(context.Background(), cfClient, community, broker.Logger, app.GUID, "web")
 		if err != nil {
 			broker.Logger.Error(fmt.Sprintf("CRS %v => ERROR from getProcessStatsByAppAndType()", appName), err)
 			return "", err
 		}
 
 		for _, stat := range stats {
-			rc.AddPeer(stat.Index, fmt.Sprintf("http://%s:%d/eureka", stat.Host, stat.InstancePorts[0].External), serviceId)
+			rc.AddPeer(stat.Index, fmt.Sprintf("http://%s:%d/eureka", stat.Host, stat.InstancePorts[0]["external"]), serviceId)
 		}
 	}
 
@@ -317,7 +318,7 @@ func (broker *SCSBroker) createRegistryServerInstance(serviceId string, instance
 
 	broker.Logger.Info(route.URL)
 
-	successfulStart, err := broker.MonitorApplicationStartup(cfClient, community, app.GUID)
+	successfulStart, err := broker.MonitorApplicationStartup(context.Background(), cfClient, community, app.GUID)
 	if err != nil || !successfulStart {
 		broker.Logger.Error(fmt.Sprintf("CRS %v => Crashed application restarting...", appName), err)
 		app, _, err = cfClient.UpdateApplicationStart(app.GUID)

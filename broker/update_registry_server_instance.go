@@ -10,11 +10,12 @@ import (
 	"strconv"
 	"time"
 
-	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3"
-	"code.cloudfoundry.org/lager"
+	brokerapi "code.cloudfoundry.org/brokerapi/v13/domain"
+	"code.cloudfoundry.org/cli/v8/api/cloudcontroller/ccv3"
+	"code.cloudfoundry.org/cli/v8/resources"
+	"code.cloudfoundry.org/lager/v3"
 	"github.com/cloudfoundry-community/scs-broker/broker/utilities"
 	scsccparser "github.com/cloudfoundry-community/spring-cloud-services-cli-config-parser"
-	brokerapi "github.com/pivotal-cf/brokerapi/domain"
 )
 
 func (broker *SCSBroker) updateRegistryServerInstance(cxt context.Context, instanceID string, details brokerapi.UpdateDetails, asyncAllowed bool) (brokerapi.UpdateServiceSpec, error) {
@@ -50,9 +51,9 @@ func (broker *SCSBroker) updateRegistryServerInstance(cxt context.Context, insta
 		return spec, err
 	}
 
-	info, _, _, err := cfClient.GetInfo()
+	info, _, err := cfClient.GetRoot()
 	if err != nil {
-		broker.Logger.Error("broker.UpdateRegistryServerInstance: cfClient.GetInfo()", err)
+		broker.Logger.Error("broker.UpdateRegistryServerInstance: cfClient.GetRoot()", err)
 		return spec, err
 	}
 
@@ -118,14 +119,14 @@ func (broker *SCSBroker) updateRegistryServerInstance(cxt context.Context, insta
 	}
 
 	if count > 1 {
-		stats, err := getProcessStatsByAppAndType(cfClient, community, broker.Logger, app.GUID, "web")
+		stats, err := getProcessStatsByAppAndType(cxt, cfClient, community, broker.Logger, app.GUID, "web")
 		if err != nil {
 			broker.Logger.Error("broker.UpdateRegistryServerInstance: getProcessStatsByAppAndType()", err)
 			return spec, err
 		}
 
 		for _, stat := range stats {
-			rc.AddPeer(stat.Index, fmt.Sprintf("http://%s:%d/eureka", stat.Host, stat.InstancePorts[0].External), details.ServiceID)
+			rc.AddPeer(stat.Index, fmt.Sprintf("http://%s:%d/eureka", stat.Host, stat.InstancePorts[0]["external"]), details.ServiceID)
 		}
 	}
 
@@ -196,8 +197,8 @@ func (broker *SCSBroker) updateRegistryServerInstance(cxt context.Context, insta
 	return spec, nil
 }
 
-func getApplicationProcessesByType(client *ccv3.Client, logger lager.Logger, appGUID string, procType string) ([]ccv3.Process, error) {
-	filtered := make([]ccv3.Process, 0)
+func getApplicationProcessesByType(client *ccv3.Client, logger lager.Logger, appGUID string, procType string) ([]resources.Process, error) {
+	filtered := make([]resources.Process, 0)
 
 	candidates, _, err := client.GetApplicationProcesses(appGUID)
 	if err != nil {

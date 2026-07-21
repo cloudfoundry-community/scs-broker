@@ -5,17 +5,17 @@ import (
 	"strconv"
 	"strings"
 
-	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3"
-	"code.cloudfoundry.org/cli/resources"
-	"code.cloudfoundry.org/cli/types"
+	"code.cloudfoundry.org/cli/v8/api/cloudcontroller/ccv3"
+	"code.cloudfoundry.org/cli/v8/resources"
+	"code.cloudfoundry.org/cli/v8/types"
 )
 
 // Updates the app environment variables for creating or updating an instance.
-func (broker *SCSBroker) UpdateAppEnvironment(cfClient *ccv3.Client, app *resources.Application, info *ccv3.Info, kind string, instanceId string, jsonparams string, params map[string]string) error {
+func (broker *SCSBroker) UpdateAppEnvironment(cfClient *ccv3.Client, app *resources.Application, info *ccv3.Root, kind string, instanceId string, jsonparams string, params map[string]string) error {
 
 	var hostKeySetSSH bool = false
 	var profiles []string
-	envVarToSet := make(ccv3.EnvironmentVariables)
+	envVarToSet := make(resources.EnvironmentVariables)
 	for key, value := range params {
 
 		envVarToSet[key] = *types.NewFilteredString(value)

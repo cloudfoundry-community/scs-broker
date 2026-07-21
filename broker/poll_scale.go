@@ -4,17 +4,18 @@ import (
 	"errors"
 	"time"
 
-	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3"
-	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/constant"
-	"code.cloudfoundry.org/lager"
+	"code.cloudfoundry.org/cli/v8/api/cloudcontroller/ccv3"
+	"code.cloudfoundry.org/cli/v8/api/cloudcontroller/ccv3/constant"
+	"code.cloudfoundry.org/cli/v8/resources"
+	"code.cloudfoundry.org/lager/v3"
 )
 
-func (broker *SCSBroker) pollScale(proc ccv3.Process, desired int) (ccv3.Process, ccv3.Warnings, error) {
+func (broker *SCSBroker) pollScale(proc resources.Process, desired int) (resources.Process, ccv3.Warnings, error) {
 	var allWarnings ccv3.Warnings
 	cfClient, err := broker.GetClient()
 	if err != nil {
 		broker.Logger.Error("broker.PollScale: broker.GetClient()", err)
-		return ccv3.Process{}, nil, errors.New("Couldn't start session: " + err.Error())
+		return resources.Process{}, nil, errors.New("Couldn't start session: " + err.Error())
 	}
 
 	done := false
@@ -31,7 +32,7 @@ func (broker *SCSBroker) pollScale(proc ccv3.Process, desired int) (ccv3.Process
 		allWarnings = append(allWarnings, warnings...)
 		if err != nil {
 			broker.Logger.Error("broker.PollScale: cfClient.GetProcessInstances()", err)
-			return ccv3.Process{}, allWarnings, err
+			return resources.Process{}, allWarnings, err
 		}
 
 		for _, instance := range instances {

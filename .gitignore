@@ -19,5 +19,6 @@ main
 
 # Ignore built artifacts
 scs-broker
+scs-broker-*-linux-amd64
 builds/
 .DS_Store

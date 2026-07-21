@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	brokerapi "github.com/pivotal-cf/brokerapi/domain"
+	brokerapi "code.cloudfoundry.org/brokerapi/v13/domain"
 )
 
 func (broker *SCSBroker) Provision(ctx context.Context, instanceID string, details brokerapi.ProvisionDetails, asyncAllowed bool) (spec brokerapi.ProvisionedServiceSpec, err error) {
